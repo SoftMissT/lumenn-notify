@@ -19,7 +19,7 @@ async function patchManifestVersion() {
   const manifestPath = path.join(dist, "module.json");
   const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
   manifest.version = version;
-  if (manifest.download) manifest.download = manifest.download.replace(/download\/v[^/]+\//, `download/${tag}/`);
+  if (manifest.download) manifest.download = manifest.download.replace(/download\/(?:v[^/]+\/)?[^/]+\.zip/, `download/${tag}/module.zip`);
   await writeFile(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
   console.log(`module.json ajustado para a tag ${tag} (version ${version})`);
 }
