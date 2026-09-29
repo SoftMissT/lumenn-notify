@@ -76,7 +76,11 @@ class LumennNotifyManager extends ApplicationV2 {
   constructor(api, options) {
     super(options);
     this.api = api;
-    this.state = { selectedId: null, selectedGroupId: null, query: "", tab: "profiles", error: "", recipient: "all" };
+    this._lumennState = { selectedId: null, selectedGroupId: null, query: "", tab: "profiles", error: "", recipient: "all" };
+  }
+
+  get state() {
+    return this._lumennState;
   }
 
   get title() {
