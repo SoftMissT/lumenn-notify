@@ -8,6 +8,7 @@ e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 ## [0.1.0] — 2026-09-29
 
 ### Adicionado
+
 - Módulo Foundry VTT `lumenn-notify` v0.1.0 (manifesto `minimum/verified: 14`).
 - API pública `game.lumennNotify` (`openManager`, `send`, `getProfiles`,
   `saveProfile`, `deleteProfile`, `getGroups`, `saveGroups`, `renderMessage`,
@@ -34,3 +35,25 @@ e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 ## [Não publicado]
 
 - Gate Foundry v14 real (GM + jogador) pendente — CT-001 a CT-020.
+
+## [0.2.0] — 2026-09-29
+
+### Adicionado
+- **Ponto de entrada na UI (GM)**: botão na paleta de Scene Controls
+  (`getSceneControlButtons`) que abre o gerenciador de mensagens.
+- Keybinding `Alt+N` (GM) para abrir o gerenciador.
+- Correção: campo de duração no editor agora converte segundos ↔ ms.
+- Correção: estado do checkbox de som lido corretamente no manager.
+- Manager: métodos de seleção viraram de instância; handlers assíncronos com `await`.
+
+### Alterado
+- Macro legada movida para `legacy/sistema-solo-leveling.js` (fora do pacote).
+
+### Corrigido
+- O módulo não tinha como ser aberto pela UI; agora há botão e keybinding.
+
+## [0.1.1] — 2026-09-29
+
+### Corrigido
+- Manifesto `download` apontando para a tag correta (`v...`), corrigindo o 404
+  do Foundry ao baixar o `module.zip`.

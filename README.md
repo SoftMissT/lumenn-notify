@@ -9,8 +9,8 @@
 
 > Mensagens narrativas, perfis e canais para **Foundry VTT v14+**.
 
-O GM cria, edita e envia cartões de notificação — avisos de Sistema, quests,
-perigos e mensagens de Constelação — para todos, para um jogador ou para grupos
+O GM cria, edita e envia cartões de notificação avisos de Sistema, quests,
+perigos e mensagens de Constelação para todos, para um jogador ou para grupos
 salvos, com três temas CSS intercambiáveis.
 
 ## Recursos
@@ -18,9 +18,9 @@ salvos, com três temas CSS intercambiáveis.
 - **Gerenciador de perfis** (ApplicationV2): criar, duplicar, renomear, salvar,
   excluir, importar e exportar perfis.
 - **Presets nativos protegidos**: `system`, `quest`, `alert`, `danger`, `skill`,
-  `levelup`, `constellation` — somente leitura; duplique para editar.
+  `levelup`, `constellation` somente leitura; duplique para editar.
 - **Destinatários**: todos, só GM, um jogador ou um grupo salvo.
-- **Temas**: `system`, `orv`, `fantasy` — troca sem alterar os dados do perfil.
+- **Temas**: `system`, `orv`, `fantasy` troca sem alterar os dados do perfil.
 - **Envio**: overlay + cartão no chat, com snapshot do perfil gravado na mensagem.
 - **Compatibilidade**: `window.SLS.send(...)` e `window.SLS.abrir()` continuam
   funcionando.
@@ -51,11 +51,11 @@ https://github.com/SoftMissT/lumenn-notify/releases/latest/download/module.json
 ### API
 
 ```js
-game.lumennNotify.openManager();              // abre o gerenciador (GM)
+game.lumennNotify.openManager(); // abre o gerenciador (GM)
 game.lumennNotify.send({ profile: "quest", destination: "all" });
-game.lumennNotify.getProfiles();              // nativos + campanha
-game.lumennNotify.saveProfile(profile);       // custom (GM)
-game.lumennNotify.deleteProfile(id);          // custom (GM)
+game.lumennNotify.getProfiles(); // nativos + campanha
+game.lumennNotify.saveProfile(profile); // custom (GM)
+game.lumennNotify.deleteProfile(id); // custom (GM)
 game.lumennNotify.getGroups();
 game.lumennNotify.saveGroups(groups);
 ```
@@ -70,11 +70,11 @@ window.SLS.send("perigo", "Presença hostil detectada.");
 
 ## Temas
 
-| Tema | Direção |
-| :--- | :--- |
-| `system` | "Star Stream Control Room" — azul-marinho + cyan, bordas técnicas |
-| `orv` | Constelações — violeta e dourado |
-| `fantasy` | Grimório/pergaminho — dourado e marrom |
+| Tema      | Direção                                                         |
+| :-------- | :-------------------------------------------------------------- |
+| `system`  | "Star Stream Control Room" azul-marinho + cyan, bordas técnicas |
+| `orv`     | Constelações violeta e dourado                                  |
+| `fantasy` | Grimório/pergaminho dourado e marrom                            |
 
 O tema é uma propriedade de cada perfil e pode ser trocado no editor sem afetar
 os demais dados.
@@ -105,4 +105,4 @@ Ver [CHANGELOG.md](CHANGELOG.md).
 
 ## Licença
 
-MIT — © 2026 Nelson Antonio Silva Leme Gonçalves.
+MIT © 2026 Nelson Antonio Silva Leme Gonçalves.

@@ -19,6 +19,30 @@ const BUILTINS = {
 const uid = (prefix = "profile") => `${prefix}-${foundry.utils.randomID(8)}`;
 const isGM = () => Boolean(game.user?.isGM);
 
+const CONTROL_NAME = "lumenn-notify";
+const CONTROL_TOOL = "open-manager";
+
+function registerSceneControl(controls) {
+  if (game.user?.isGM !== true) return;
+  controls[CONTROL_NAME] = {
+    name: CONTROL_NAME,
+    order: 90,
+    title: "Lumenn Notify",
+    icon: "fa-solid fa-satellite-dish",
+    visible: true,
+    tools: {
+      [CONTROL_TOOL]: {
+        name: CONTROL_TOOL,
+        order: 0,
+        title: "Abrir gerenciador de mensagens",
+        icon: "fa-solid fa-comment-dots",
+        button: true,
+        onChange: () => game.lumennNotify?.openManager(),
+      },
+    },
+  };
+}
+
 function normalizeIcon(icon) {
   const value = String(icon ?? "");
   if (!value) return "fa-solid fa-satellite-dish";
@@ -170,7 +194,22 @@ Hooks.on("createChatMessage", (message) => {
   showOverlay(snapshot);
 });
 
-Hooks.once("init", () => { registerSettings(); });
+Hooks.once("init", () => {
+  registerSettings();
+  game.keybindings?.register(NS, "open-manager", {
+    name: "Abrir gerenciador Lumenn Notify",
+    hint: "Abre o console de mensagens (somente GM).",
+    editable: [{ key: "KeyN", modifiers: ["Alt"] }],
+    restricted: true,
+    onDown: () => {
+      game.lumennNotify?.openManager();
+      return true;
+    },
+  });
+});
+
+Hooks.on("getSceneControlButtons", registerSceneControl);
+
 Hooks.once("ready", async () => {
   const current = game.settings.get(NS, KEY) ?? {};
   if (!Object.keys(current).length) {
@@ -179,7 +218,7 @@ Hooks.once("ready", async () => {
   }
   const api = { openManager: () => openManager(api), send, getProfile: findProfile, getProfiles, saveProfile, deleteProfile, getGroups, saveGroups, renderMessage, normalizeProfile, BUILTINS };
   game.lumennNotify = api;
-  window.SLS = { __v: "module-0.1.0", abrir: api.openManager, send: (data, body) => typeof data === "string" ? send({ profile: data, body }) : send(data), perfis: BUILTINS };
+  window.SLS = { __v: "module-0.2.0", abrir: api.openManager, send: (data, body) => typeof data === "string" ? send({ profile: data, body }) : send(data), perfis: BUILTINS };
 });
 
 export { BUILTINS, getProfiles, getGroups, normalizeProfile, renderMessage, send, saveProfile, deleteProfile };

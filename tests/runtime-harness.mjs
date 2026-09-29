@@ -34,6 +34,7 @@ globalThis.game = {
     get: (ns, key) => settings.get(`${ns}.${key}`),
     set: (ns, key, value) => settings.set(`${ns}.${key}`, value),
   },
+  keybindings: { register: () => undefined },
 };
 
 globalThis.foundry = {
@@ -195,7 +196,6 @@ console.log("\n[overlay hook]");
 const createHooks = hooks.list.createChatMessage ?? [];
 if (createHooks.length) ok("hook createChatMessage registrado");
 else bad("hook createChatMessage registrado", "ausente");
-
 const snapMsg = {
   visible: true,
   author: { id: "p1" },
@@ -206,6 +206,29 @@ for (const fn of createHooks) fn(snapMsg);
 if (overlayBodies.length && overlayBodies[0].className === "ln-overlay" && overlayBodies[0].innerHTML.includes("ln-message"))
   ok("overlay exibido no receptor");
 else bad("overlay exibido no receptor", JSON.stringify(overlayBodies.map((e) => ({ className: e.className, html: e.innerHTML }))));
+
+console.log("\n[entrada GM: scene control]");
+const sceneHooks = hooks.list.getSceneControlButtons ?? [];
+if (sceneHooks.length) ok("hook getSceneControlButtons registrado");
+else bad("hook getSceneControlButtons registrado", "ausente");
+const controls = {};
+for (const fn of sceneHooks) fn(controls);
+const control = controls["lumenn-notify"];
+if (control?.tools?.["open-manager"]) ok("scene control com tool open-manager");
+else bad("scene control com tool open-manager", JSON.stringify(controls));
+const tool = control?.tools?.["open-manager"];
+if (tool?.button === true && typeof tool.onChange === "function") ok("tool é botão clicável (button+onChange)");
+else bad("tool é botão clicável (button+onChange)", JSON.stringify(tool));
+
+console.log("\n[keybinding]");
+const initHook = hooks.list.init;
+if (initHook) {
+  const kb = [];
+  globalThis.game.keybindings.register = (ns, key) => kb.push(`${ns}.${key}`);
+  initHook();
+  if (kb.includes("lumenn-notify.open-manager")) ok("keybinding open-manager registrado");
+  else bad("keybinding open-manager registrado", JSON.stringify(kb));
+} else bad("hook init disponível", "ausente");
 
 if (failed) {
   console.error(`\nFAIL · ${failed} check(s) falharam`);

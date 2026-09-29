@@ -134,9 +134,9 @@ class LumennNotifyManager extends ApplicationV2 {
       tag: value("tag") || p.tag,
       footer: value("footer") || p.footer,
       narrative: value("narrative") || p.narrative || "",
-      duration: Math.max(0, Number(value("duration")) || 0),
+      duration: Math.max(0, Number(value("duration")) * 1000 || 0),
       mode: value("mode") || p.mode,
-      sound: value("sound") === "on",
+      sound: Boolean(root.querySelector('[data-lm-field="sound"]')?.checked),
       stats,
     };
   }
@@ -251,7 +251,7 @@ class LumennNotifyManager extends ApplicationV2 {
               <label>Modo
                 <select data-lm-field="mode">${selectOptions(modes, s.mode)}</select>
               </label>
-              <label>Duração (s)<input type="number" min="0" max="60" step="1" data-lm-field="duration" value="${esc(s.duration ?? 0)}"></label>
+              <label>Duração (s)<input type="number" min="0" max="60" step="1" data-lm-field="duration" value="${esc(Math.round((Number(s.duration) || 0) / 1000))}"></label>
               <label class="lm-check"><input type="checkbox" data-lm-field="sound"${s.sound ? " checked" : ""}> Tocar som</label>
             </div>
             <div class="lm-send">
@@ -331,9 +331,9 @@ class LumennNotifyManager extends ApplicationV2 {
     </div>`;
   }
 
-  static #selectedProfile(instance) {
-    const id = instance.state.selectedId;
-    const all = instance.api.getProfiles();
+  #selectedProfile() {
+    const id = this.state.selectedId;
+    const all = this.api.getProfiles();
     if (id && all[id]) return all[id];
     return Object.values(all)[0] ?? null;
   }
@@ -354,25 +354,25 @@ class LumennNotifyManager extends ApplicationV2 {
     await this.render(true);
   }
 
-  static #newGroup(event, target) {
+  static async #newGroup(event, target) {
     const id = `group-${foundry.utils.randomID(8)}`;
     const groups = { ...this.api.getGroups(), [id]: { id, name: "Novo grupo", userIds: [] } };
-    this.api.saveGroups(groups);
+    await this.api.saveGroups(groups);
     this.state.selectedGroupId = id;
     this.state.error = "";
     this.render(true);
   }
 
-  static #newProfile(event, target) {
+  static async #newProfile(event, target) {
     const id = `profile-${foundry.utils.randomID(8)}`;
-    this.api.saveProfile({ id, name: "Novo perfil", type: "custom", theme: "system", body: "", builtin: false });
+    await this.api.saveProfile({ id, name: "Novo perfil", type: "custom", theme: "system", body: "", builtin: false });
     this.state.selectedId = id;
     this.state.error = "";
     this.render(true);
   }
 
   static async #duplicateProfile(event, target) {
-    const base = this.#selectedProfile(this);
+    const base = this.#selectedProfile();
     if (!base) return;
     const id = `profile-${foundry.utils.randomID(8)}`;
     await this.api.saveProfile({ ...base, id, name: `${base.name} (cópia)`, builtin: false });
@@ -408,7 +408,7 @@ class LumennNotifyManager extends ApplicationV2 {
   }
 
   static async #deleteProfile(event, target) {
-    const p = this.#selectedProfile(this);
+    const p = this.#selectedProfile();
     if (!p) return;
     if (p.builtin || this.api.BUILTINS[p.id]) {
       this.state.error = "Presets nativos são protegidos.";
@@ -427,7 +427,7 @@ class LumennNotifyManager extends ApplicationV2 {
   }
 
   static async #useProfile(event, target) {
-    const p = this.#selectedProfile(this);
+    const p = this.#selectedProfile();
     if (!p) return;
     const root = this.element;
     const recipient = root.querySelector('[data-lm-field="recipient"]')?.value ?? "all";
@@ -490,8 +490,8 @@ class LumennNotifyManager extends ApplicationV2 {
     foundry.utils.saveDataToFile(json, "text/json", "lumenn-notify-profiles.json");
   }
 
-  static #selectedGroup(instance) {
-    return Object.values(instance.api.getGroups()).find((g) => g.id === instance.state.selectedGroupId) ?? null;
+  #selectedGroup() {
+    return Object.values(this.api.getGroups()).find((g) => g.id === this.state.selectedGroupId) ?? null;
   }
 
   static async #saveGroup(event, target) {
@@ -503,7 +503,7 @@ class LumennNotifyManager extends ApplicationV2 {
       this.render(true);
       return;
     }
-    const existing = this.#selectedGroup(this);
+    const existing = this.#selectedGroup();
     const id = existing?.id ?? `group-${foundry.utils.randomID(8)}`;
     const groups = { ...this.api.getGroups(), [id]: { id, name, userIds } };
     await this.api.saveGroups(groups);
@@ -514,7 +514,7 @@ class LumennNotifyManager extends ApplicationV2 {
   }
 
   static async #deleteGroup(event, target) {
-    const g = this.#selectedGroup(this);
+    const g = this.#selectedGroup();
     if (!g) return;
     const confirmed = await DialogV2.confirm({
       window: { title: "Excluir grupo" },

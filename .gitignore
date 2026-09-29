@@ -1,6 +1,7 @@
 # Hive / tooling
 AGENTS.md
 .claude/
+.agents/
 .gitnexus/
 
 # Build
