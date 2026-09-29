@@ -1,0 +1,42 @@
+/* Lumenn Notify · Tema FANTASY — "grimório / pergaminho"
+   Escopo: [data-lm-theme="fantasy"] */
+
+[data-lm-theme="fantasy"] .ln-frame {
+  --lm-bg: #0d0a06;
+  --lm-surface: #1a140c;
+  --lm-fg: #f3ead6;
+  --lm-dim: #c9b89a;
+  --lm-accent: #d9a441;
+  --lm-border: #d9a441;
+  --lm-emitter: #e8c98a;
+  --lm-stat-bg: rgba(217, 164, 65, 0.12);
+  --lm-radius: 10px;
+  --lm-shadow: 0 0 30px rgba(217, 164, 65, 0.2), 0 0 8px rgba(217, 164, 65, 0.35), 0 18px 50px rgba(0, 0, 0, 0.7);
+  --lm-font: var(--lm-font-ui);
+  background: linear-gradient(180deg, #d9a441 0%, rgba(217, 164, 65, 0.55) 50%, rgba(160, 110, 40, 0.4) 100%);
+}
+[data-lm-theme="fantasy"] .ln-frame::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d9a441 25%, #f7e8c8 50%, #d9a441 75%, transparent);
+  box-shadow: 0 0 14px #d9a441;
+  opacity: 0.85;
+}
+[data-lm-theme="fantasy"] .ln-message > .ln-frame {
+  background:
+    radial-gradient(120% 90% at 50% -18%, rgba(217, 164, 65, 0.2), transparent 62%),
+    radial-gradient(110% 70% at 0% 112%, rgba(160, 110, 40, 0.14), transparent 58%),
+    linear-gradient(168deg, rgba(40, 30, 18, 0.97) 0%, rgba(28, 21, 13, 0.98) 44%, rgba(13, 10, 6, 0.99) 100%);
+}
+[data-lm-theme="fantasy"] .ln-tag {
+  color: #eec37c;
+  background: #0d0a06;
+  border-color: rgba(217, 164, 65, 0.45);
+}
+[data-lm-theme="fantasy"] .ln-message header h2 {
+  letter-spacing: 0.16em;
+}

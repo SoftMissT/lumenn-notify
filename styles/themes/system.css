@@ -1,0 +1,40 @@
+/* Lumenn Notify · Tema SYSTEM — "Star Stream Control Room"
+   Escopo: [data-lm-theme="system"] */
+
+[data-lm-theme="system"] .ln-frame {
+  --lm-bg: #05070a;
+  --lm-surface: #0f1620;
+  --lm-fg: #e6f1ff;
+  --lm-dim: #b8c5d8;
+  --lm-accent: #4abdff;
+  --lm-border: #4abdff;
+  --lm-emitter: #8fd0ff;
+  --lm-stat-bg: rgba(74, 189, 255, 0.12);
+  --lm-radius: 3px;
+  --lm-shadow: 0 0 30px rgba(74, 189, 255, 0.22), 0 0 6px rgba(74, 189, 255, 0.4), 0 20px 55px rgba(0, 0, 0, 0.72);
+  --lm-font: var(--lm-font-ui);
+  background: linear-gradient(180deg, #4abdff 0%, rgba(74, 189, 255, 0.55) 55%, rgba(74, 189, 255, 0.4) 100%);
+}
+[data-lm-theme="system"] .ln-frame::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #4abdff 22%, #fff 50%, #4abdff 78%, transparent);
+  box-shadow: 0 0 14px #4abdff;
+  opacity: 0.9;
+}
+[data-lm-theme="system"] .ln-frame > .ln-panel,
+[data-lm-theme="system"] .ln-message > .ln-frame {
+  background:
+    radial-gradient(120% 90% at 50% -18%, rgba(74, 189, 255, 0.22), transparent 62%),
+    radial-gradient(110% 70% at 0% 112%, rgba(74, 189, 255, 0.15), transparent 58%),
+    linear-gradient(168deg, rgba(26, 36, 50, 0.96) 0%, rgba(17, 25, 37, 0.97) 44%, rgba(9, 13, 22, 0.98) 100%);
+}
+[data-lm-theme="system"] .ln-tag {
+  color: #4abdff;
+  background: #05070a;
+  border-color: rgba(74, 189, 255, 0.4);
+}

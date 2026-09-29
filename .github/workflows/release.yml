@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Check syntax
+        run: node --check scripts/lumenn-notify.js && node --check scripts/lumenn-notify-manager.js && node --check macros/sls-open-manager.js
+
+      - name: Static checks
+        run: node tests/static-check.mjs
+
+      - name: Runtime harness
+        run: node tests/runtime-harness.mjs
+
+      - name: Package module
+        run: node scripts-dev/package-zip.mjs
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            dist/module.zip
+            dist/module.json
+          generate_release_notes: true

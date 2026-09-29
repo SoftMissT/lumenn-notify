@@ -1,0 +1,11 @@
+# Hive / tooling
+AGENTS.md
+.claude/
+.gitnexus/
+
+# Build
+dist/
+node_modules/
+
+# SDD planejamento (interno, não entra na release)
+/SDD/*
