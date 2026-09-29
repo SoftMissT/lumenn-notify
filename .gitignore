@@ -1,12 +1,23 @@
-# Hive / tooling
-AGENTS.md
+# Dependências e logs locais
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+
+# Checks e ferramentas locais
+coverage/
+.playwright-mcp/
 .claude/
 .agents/
 .gitnexus/
+AGENTS.md
 
-# Build
-dist/
-node_modules/
+# Arquivos da máquina
+.DS_Store
+Thumbs.db
 
-# SDD planejamento (interno, não entra na release)
+# Planejamento interno
 /SDD/*
+/.gitnexus
+/legacy

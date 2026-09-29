@@ -153,12 +153,15 @@
 
 /* ---------- Gerenciador (ApplicationV2) ---------- */
 .lumenn-notify-manager {
-  --lm-manager-bg: #0b0f14;
-  --lm-manager-panel: #10151c;
-  --lm-manager-line: #232b36;
-  --lm-manager-text: #e6f1ff;
-  --lm-manager-dim: #9aa7bb;
-  --lm-manager-accent: #4abdff;
+  --lm-manager-bg: #080d15;
+  --lm-manager-panel: #101925;
+  --lm-manager-line: rgba(151, 181, 213, 0.2);
+  --lm-manager-text: #edf5ff;
+  --lm-manager-dim: #91a4ba;
+  --lm-manager-accent: #79c9ff;
+  --lm-manager-focus: rgba(121, 201, 255, 0.42);
+  --lm-manager-radius: 6px;
+  background: var(--lm-manager-bg);
 }
 .lumenn-notify-manager .lm-manager {
   display: grid;
@@ -171,10 +174,13 @@
 .lumenn-notify-manager .lm-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px;
+  gap: 10px;
+  padding: 14px;
   border-right: 1px solid var(--lm-manager-line);
-  background: var(--lm-manager-bg);
+  background:
+    linear-gradient(180deg, rgba(40, 66, 96, 0.34), transparent 30%),
+    var(--lm-manager-bg);
+  box-shadow: inset -1px 0 rgba(255, 255, 255, 0.035);
   min-height: 0;
 }
 .lumenn-notify-manager .lm-search-wrap {
@@ -200,6 +206,7 @@
 .lumenn-notify-manager #lm-search:focus {
   outline: none;
   border-color: var(--lm-manager-accent);
+  box-shadow: 0 0 0 3px var(--lm-manager-focus);
 }
 .lumenn-notify-manager .lm-tabs {
   display: flex;
@@ -220,6 +227,7 @@
 .lumenn-notify-manager .lm-tab.active {
   color: var(--lm-manager-accent);
   border-color: var(--lm-manager-accent);
+  background: rgba(121, 201, 255, 0.1);
 }
 .lumenn-notify-manager .lm-list {
   list-style: none;
@@ -237,8 +245,9 @@
   align-items: center;
   gap: 8px;
   width: 100%;
-  padding: 8px 10px;
-  background: var(--lm-manager-panel);
+  min-height: 42px;
+  padding: 9px 10px;
+  background: rgba(255, 255, 255, 0.025);
   border: 1px solid transparent;
   border-radius: 3px;
   color: var(--lm-manager-text);
@@ -251,7 +260,8 @@
 }
 .lumenn-notify-manager .lm-profile.active {
   border-color: var(--lm-manager-accent);
-  box-shadow: inset 0 0 0 1px var(--lm-manager-accent);
+  background: linear-gradient(90deg, rgba(121, 201, 255, 0.16), rgba(121, 201, 255, 0.035));
+  box-shadow: inset 3px 0 var(--lm-manager-accent);
 }
 .lumenn-notify-manager .lm-profile i {
   width: 16px;
@@ -288,14 +298,16 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: var(--lm-manager-panel);
+  background:
+    radial-gradient(900px 420px at 85% -10%, rgba(55, 104, 153, 0.2), transparent 65%),
+    var(--lm-manager-panel);
 }
 .lumenn-notify-manager .lm-toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--lm-manager-line);
 }
 .lumenn-notify-manager .lm-toolbar button {
@@ -305,10 +317,16 @@
   padding: 6px 12px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--lm-manager-line);
-  border-radius: 3px;
+  min-height: 34px;
+  border-radius: var(--lm-manager-radius);
   color: var(--lm-manager-text);
   font-size: 12px;
   cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+.lumenn-notify-manager .lm-toolbar button:hover:not(:disabled) {
+  background: rgba(121, 201, 255, 0.08);
+  transform: translateY(-1px);
 }
 .lumenn-notify-manager .lm-toolbar button:hover:not(:disabled) {
   border-color: var(--lm-manager-accent);
@@ -330,8 +348,8 @@
 .lumenn-notify-manager .lm-body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
-  gap: 12px;
-  padding: 12px;
+  gap: 16px;
+  padding: 16px;
   overflow-y: auto;
   min-height: 0;
 }
@@ -383,6 +401,7 @@
 .lumenn-notify-manager .lm-editor textarea:focus {
   outline: none;
   border-color: var(--lm-manager-accent);
+  box-shadow: 0 0 0 3px var(--lm-manager-focus);
 }
 .lumenn-notify-manager .lm-check {
   flex-direction: row !important;
@@ -428,10 +447,34 @@
   color: var(--lm-manager-dim);
 }
 .lumenn-notify-manager .lm-preview-box {
-  border: 1px dashed var(--lm-manager-line);
-  border-radius: 4px;
-  padding: 12px;
-  background: var(--lm-manager-bg);
+  border: 1px solid var(--lm-manager-line);
+  border-radius: var(--lm-manager-radius);
+  padding: 14px;
+  background: rgba(5, 10, 17, 0.52);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.05), 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+.lumenn-notify-manager button:focus-visible,
+.lumenn-notify-manager input:focus-visible,
+.lumenn-notify-manager select:focus-visible,
+.lumenn-notify-manager textarea:focus-visible {
+  outline: 2px solid var(--lm-manager-accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .lumenn-notify-manager .lm-manager,
+  .lumenn-notify-manager .lm-body {
+    grid-template-columns: 1fr;
+  }
+  .lumenn-notify-manager .lm-sidebar {
+    max-height: 240px;
+    border-right: 0;
+    border-bottom: 1px solid var(--lm-manager-line);
+  }
+  .lumenn-notify-manager .lm-preview {
+    position: static;
+  }
 }
 
 /* Chat: cartões do módulo sem a moldura padrão do Foundry */

@@ -9,9 +9,9 @@
 
 > Mensagens narrativas, perfis e canais para **Foundry VTT v14+**.
 
-O GM cria, edita e envia cartões de notificação avisos de Sistema, quests,
-perigos e mensagens de Constelação para todos, para um jogador ou para grupos
-salvos, com três temas CSS intercambiáveis.
+O GM cria, edita e envia cartões de Sistema, quests, perigos e mensagens de
+Constelação para todos, para um jogador ou para grupos salvos. Cada perfil pode
+usar um dos três temas CSS intercambiáveis.
 
 ## Recursos
 
@@ -46,7 +46,7 @@ https://github.com/SoftMissT/lumenn-notify/releases/latest/download/module.json
    - Macro `sls-open-manager`, ou
    - `game.lumennNotify.openManager()` no console.
 3. Escolha um perfil, ajuste texto/tema/destinatário, confira a prévia e clique
-   em **Usar**.
+   em **Enviar agora**.
 
 ### API
 
@@ -70,14 +70,14 @@ window.SLS.send("perigo", "Presença hostil detectada.");
 
 ## Temas
 
-| Tema      | Direção                                                         |
-| :-------- | :-------------------------------------------------------------- |
-| `system`  | "Star Stream Control Room" azul-marinho + cyan, bordas técnicas |
-| `orv`     | Constelações violeta e dourado                                  |
-| `fantasy` | Grimório/pergaminho dourado e marrom                            |
+| Tema      | Direção |
+| :-------- | :------ |
+| `system`  | Sala de controle azul-marinho e cyan, com moldura técnica |
+| `orv`     | Constelações em violeta e dourado |
+| `fantasy` | Grimório em dourado e marrom |
 
-O tema é uma propriedade de cada perfil e pode ser trocado no editor sem afetar
-os demais dados.
+O tema é uma propriedade de cada perfil. Trocar o tema no editor não altera o
+texto, o destino nem os demais dados.
 
 ## Desenvolvimento
 

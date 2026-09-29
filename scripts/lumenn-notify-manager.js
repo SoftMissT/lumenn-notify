@@ -476,7 +476,7 @@ class LumennNotifyManager extends ApplicationV2 {
         ui.notifications.info(`${count} perfil(is) importado(s).`);
         this.render(true);
       } catch (error) {
-        ui.notifications.error("Lumenn Notify: JSON inválido — importação rejeitada.");
+        ui.notifications.error("Lumenn Notify: JSON inválido. Importação rejeitada.");
       }
     });
     input.click();

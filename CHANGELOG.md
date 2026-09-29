@@ -5,7 +5,7 @@ Todas as mudanças relevantes do módulo **Lumenn Notify** são registradas aqui
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 
-## [0.1.0] — 2026-09-29
+## [0.1.0] - 2026-09-29
 
 ### Adicionado
 
@@ -34,9 +34,9 @@ e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
-- Gate Foundry v14 real (GM + jogador) pendente — CT-001 a CT-020.
+- Gate Foundry v14 real (GM + jogador) pendente: CT-001 a CT-020.
 
-## [0.2.0] — 2026-09-29
+## [0.2.0] - 2026-09-29
 
 ### Adicionado
 - **Ponto de entrada na UI (GM)**: botão na paleta de Scene Controls
@@ -52,7 +52,7 @@ e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 ### Corrigido
 - O módulo não tinha como ser aberto pela UI; agora há botão e keybinding.
 
-## [0.1.1] — 2026-09-29
+## [0.1.1] - 2026-09-29
 
 ### Corrigido
 - Manifesto `download` apontando para a tag correta (`v...`), corrigindo o 404
