@@ -5,6 +5,11 @@ Todas as mudanças relevantes do módulo **Lumenn Notify** são registradas aqui
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.2.5] - 2026-09-29
+
+- Inclui fundo holográfico 16:9 no gerenciador, com moldura angular e constelações.
+- Empacota os assets visuais no módulo para que a instalação do Foundry receba o novo design.
+
 ## [0.2.4] - 2026-09-29
 
 - Adiciona fundo atmosférico holográfico ao gerenciador.

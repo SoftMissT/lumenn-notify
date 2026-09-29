@@ -10,7 +10,7 @@ const exec = promisify(execFile);
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const dist = path.join(root, "dist");
 
-const RUNTIME_FILES = ["module.json", "scripts", "styles", "macros", "LICENSE", "README.md", "CHANGELOG.md"];
+const RUNTIME_FILES = ["module.json", "scripts", "styles", "macros", "assets", "LICENSE", "README.md", "CHANGELOG.md"];
 
 async function patchManifestVersion() {
   const tag = process.env.GITHUB_REF_NAME;

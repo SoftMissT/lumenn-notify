@@ -243,22 +243,21 @@
   --lm-manager-accent: #79c9ff;
   --lm-manager-accent-soft: rgba(121, 201, 255, 0.14);
   --lm-manager-accent-line: rgba(121, 201, 255, 0.32);
-  background:
-    radial-gradient(900px 520px at 82% -10%, var(--lm-manager-accent-soft), transparent 62%),
-    radial-gradient(620px 520px at -12% 115%, rgba(38, 105, 175, 0.18), transparent 68%),
-    repeating-linear-gradient(0deg, transparent 0 31px, rgba(126, 184, 236, 0.035) 32px),
-    repeating-linear-gradient(90deg, transparent 0 47px, rgba(126, 184, 236, 0.025) 48px),
-    var(--lm-manager-panel);
+  background: #050b16 url("../assets/manager-bg-16x9.png") center / cover no-repeat;
 }
 .lumenn-notify-manager .lm-manager::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.55;
+  z-index: 0;
+  opacity: 0.92;
   background:
-    linear-gradient(115deg, transparent 0 22%, rgba(121, 201, 255, 0.06) 22.1%, transparent 22.4%),
-    linear-gradient(295deg, transparent 0 68%, rgba(121, 201, 255, 0.045) 68.1%, transparent 68.35%);
+    linear-gradient(90deg, rgba(3, 8, 17, 0.92), rgba(5, 12, 25, 0.72) 48%, rgba(3, 8, 17, 0.9)),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(126, 184, 236, 0.045) 32px),
+    repeating-linear-gradient(90deg, transparent 0 47px, rgba(126, 184, 236, 0.032) 48px),
+    linear-gradient(115deg, transparent 0 22%, rgba(121, 201, 255, 0.07) 22.1%, transparent 22.4%),
+    linear-gradient(295deg, transparent 0 68%, rgba(121, 201, 255, 0.055) 68.1%, transparent 68.35%);
 }
 .lumenn-notify-manager .lm-sidebar,
 .lumenn-notify-manager .lm-main {
@@ -282,8 +281,9 @@
   padding: 14px;
   border-right: 1px solid var(--lm-manager-line);
   background:
-    linear-gradient(180deg, rgba(40, 66, 96, 0.34), transparent 30%),
-    var(--lm-manager-bg);
+    linear-gradient(180deg, rgba(18, 42, 70, 0.78), rgba(4, 10, 19, 0.96) 38%),
+    rgba(4, 10, 19, 0.86);
+  backdrop-filter: blur(8px);
   box-shadow: inset -1px 0 rgba(255, 255, 255, 0.035);
   min-height: 0;
 }
@@ -424,7 +424,8 @@
   min-height: 0;
   background:
     radial-gradient(700px 360px at 92% 0%, var(--lm-manager-accent-soft), transparent 68%),
-    linear-gradient(135deg, rgba(8, 15, 27, 0.78), rgba(16, 25, 37, 0.92));
+    linear-gradient(135deg, rgba(8, 15, 27, 0.74), rgba(10, 19, 32, 0.82));
+  backdrop-filter: blur(5px);
 }
 .lumenn-notify-manager .lm-command-header {
   display: flex;
