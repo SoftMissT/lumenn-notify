@@ -91,6 +91,10 @@ class LumennNotifyManager extends ApplicationV2 {
     return this.state.tab === "groups" ? this.#buildGroupsHTML() : this.#buildProfilesHTML();
   }
 
+  _replaceHTML(result, content) {
+    content.innerHTML = String(result ?? "");
+  }
+
   _onRender(context, options) {
     super._onRender?.(context, options);
     const search = this.element.querySelector("#lm-search");

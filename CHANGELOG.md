@@ -5,6 +5,10 @@ Todas as mudanças relevantes do módulo **Lumenn Notify** são registradas aqui
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.2.2] - 2026-09-29
+
+- Implementa `_replaceHTML` para tornar o gerenciador compatível com o ciclo de renderização do `ApplicationV2` no Foundry v14.
+
 ## [0.2.1] - 2026-09-29
 
 - Corrige a abertura do gerenciador no Foundry v14: o estado interno não tenta mais escrever na propriedade somente leitura de `ApplicationV2`.
