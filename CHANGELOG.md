@@ -5,6 +5,12 @@ Todas as mudanças relevantes do módulo **Lumenn Notify** são registradas aqui
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.2.3] - 2026-09-29
+
+- Atualiza o gerenciador para uma janela 16:9 com preview mais amplo e legível.
+- Adiciona preview inicial e atualização ao vivo para campos, tema e tipo.
+- Reforça as molduras SYSTEM, ORV e FANTASY no preview, chat e overlay.
+
 ## [0.2.2.1] - 2026-09-29
 
 - Refina a HUD do gerenciador com identidade visual do Monarca e seleção visual de tema.

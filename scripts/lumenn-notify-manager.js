@@ -54,7 +54,7 @@ class LumennNotifyManager extends ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: `${MODULE_ID}-manager`,
     classes: ["lumenn-notify-manager"],
-    position: { width: 1040, height: 640 },
+    position: { width: 1280, height: 720 },
     window: { title: "Lumenn Notify · Console de Mensagens", icon: "fa-solid fa-satellite-dish", resizable: true },
     actions: {
       selectProfile: LumennNotifyManager.#selectProfile,
@@ -114,6 +114,7 @@ class LumennNotifyManager extends ApplicationV2 {
         const select = this.element.querySelector('[data-lm-field="theme"]');
         if (!select) return;
         select.value = btn.dataset.themeOption;
+        this.element.querySelector(".lm-manager")?.setAttribute("data-lm-manager-theme", btn.dataset.themeOption);
         this.element.querySelectorAll("[data-theme-option]").forEach((option) => {
           const active = option === btn;
           option.classList.toggle("active", active);
@@ -174,6 +175,8 @@ class LumennNotifyManager extends ApplicationV2 {
     const target = this.element.querySelector("[data-el='preview']");
     if (!target) return;
     const p = this.#draft();
+    this.element.querySelector(".lm-manager")?.setAttribute("data-lm-manager-theme", p.theme);
+    target.dataset.lmTheme = p.theme;
     target.innerHTML = this.api.renderMessage({ ...p, builtin: false });
   }
 
@@ -227,8 +230,9 @@ class LumennNotifyManager extends ApplicationV2 {
     const userSel = recipients.includes(this.state.recipient ?? "all") ? (this.state.recipient ?? "all") : "all";
 
     return `
-    <div class="lm-manager">
+    <div class="lm-manager" data-lm-manager-theme="${esc(s.theme ?? "system")}">
       <div class="lm-sidebar">
+        <div class="lm-sidebar-heading"><span>Perfis da campanha</span><b>${profiles.length}</b></div>
         <div class="lm-search-wrap">
           <i class="fa-solid fa-magnifying-glass"></i>
           <input id="lm-search" type="search" placeholder="Buscar perfil..." value="${esc(this.state.query)}">
@@ -244,6 +248,7 @@ class LumennNotifyManager extends ApplicationV2 {
           <div>
             <span class="lm-kicker">SISTEMA DE MENSAGENS // GM</span>
             <h1>Console do Monarca</h1>
+            <span class="lm-profile-context">Perfil ativo: ${esc(s.name ?? "Nenhum perfil")}</span>
           </div>
           <span class="lm-online"><i class="fa-solid fa-circle"></i> canal seguro</span>
         </div>
@@ -307,7 +312,7 @@ class LumennNotifyManager extends ApplicationV2 {
           </div>
           <div class="lm-preview">
             <div class="lm-preview-label">Prévia real</div>
-            <div class="lm-preview-box" data-el="preview"></div>
+            <div class="lm-preview-box" data-el="preview" data-lm-theme="${esc(s.theme ?? "system")}">${this.api.renderMessage({ ...s, builtin: false })}</div>
           </div>
         </div>
       </div>

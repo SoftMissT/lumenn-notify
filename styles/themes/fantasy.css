@@ -13,7 +13,10 @@
   --lm-radius: 10px;
   --lm-shadow: 0 0 30px rgba(217, 164, 65, 0.2), 0 0 8px rgba(217, 164, 65, 0.35), 0 18px 50px rgba(0, 0, 0, 0.7);
   --lm-font: var(--lm-font-ui);
-  background: linear-gradient(180deg, #d9a441 0%, rgba(217, 164, 65, 0.55) 50%, rgba(160, 110, 40, 0.4) 100%);
+  background:
+    repeating-linear-gradient(135deg, transparent 0 13px, rgba(247, 232, 200, 0.05) 14px, transparent 15px),
+    radial-gradient(circle at 82% 20%, rgba(255, 232, 167, 0.16), transparent 28%),
+    linear-gradient(180deg, #d9a441 0%, rgba(217, 164, 65, 0.55) 50%, rgba(160, 110, 40, 0.4) 100%);
 }
 [data-lm-theme="fantasy"] .ln-frame::after {
   content: "";

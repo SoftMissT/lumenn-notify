@@ -13,7 +13,10 @@
   --lm-radius: 3px;
   --lm-shadow: 0 0 30px rgba(74, 189, 255, 0.22), 0 0 6px rgba(74, 189, 255, 0.4), 0 20px 55px rgba(0, 0, 0, 0.72);
   --lm-font: var(--lm-font-ui);
-  background: linear-gradient(180deg, #4abdff 0%, rgba(74, 189, 255, 0.55) 55%, rgba(74, 189, 255, 0.4) 100%);
+  background:
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(74, 189, 255, 0.06) 32px),
+    repeating-linear-gradient(90deg, transparent 0 47px, rgba(74, 189, 255, 0.045) 48px),
+    linear-gradient(180deg, #4abdff 0%, rgba(74, 189, 255, 0.55) 55%, rgba(74, 189, 255, 0.4) 100%);
 }
 [data-lm-theme="system"] .ln-frame::after {
   content: "";
@@ -37,4 +40,8 @@
   color: #4abdff;
   background: #05070a;
   border-color: rgba(74, 189, 255, 0.4);
+}
+[data-lm-theme="system"] .ln-message header h2,
+[data-lm-theme="system"] .ln-message .ln-origin {
+  text-shadow: 0 0 12px rgba(74, 189, 255, 0.55);
 }

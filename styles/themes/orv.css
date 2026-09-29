@@ -13,7 +13,10 @@
   --lm-radius: 6px;
   --lm-shadow: 0 0 34px rgba(179, 136, 255, 0.28), 0 0 8px rgba(179, 136, 255, 0.4), 0 20px 55px rgba(0, 0, 0, 0.75);
   --lm-font: var(--lm-font-ui);
-  background: linear-gradient(180deg, #d8b45a 0%, rgba(179, 136, 255, 0.6) 45%, rgba(216, 180, 90, 0.35) 100%);
+  background:
+    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.16) 0 1px, transparent 2px) 0 0 / 54px 54px,
+    radial-gradient(circle at 78% 72%, rgba(216, 180, 90, 0.2) 0 1px, transparent 2px) 0 0 / 67px 67px,
+    linear-gradient(180deg, #d8b45a 0%, rgba(179, 136, 255, 0.6) 45%, rgba(216, 180, 90, 0.35) 100%);
 }
 [data-lm-theme="orv"] .ln-frame::after {
   content: "";
