@@ -27,6 +27,8 @@
   border-radius: 0;
   clip-path: polygon(0 16px, 16px 0, calc(100% - 16px) 0, 100% 16px, 100% calc(100% - 16px), calc(100% - 16px) 100%, 16px 100%, 0 calc(100% - 16px));
   box-shadow: var(--lm-shadow, 0 0 24px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 0 18px var(--lm-stat-bg, rgba(74, 189, 255, 0.18)));
+  animation: lm-system-breathe 4.5s ease-in-out infinite;
 }
 .ln-message .ln-frame::before {
   content: "";
@@ -72,7 +74,7 @@
   margin: 0;
   font-family: var(--lm-font-display, inherit);
   font-weight: 800;
-  font-size: clamp(16px, 2.6vw, 22px);
+  font-size: clamp(18px, 2.8vw, 26px);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--lm-fg, inherit);
@@ -96,7 +98,7 @@
   margin: 14px 0 0;
   font-size: clamp(15px, 2vw, 18px);
   line-height: 1.5;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--lm-fg, inherit);
 }
 .ln-message .ln-stats {
@@ -140,7 +142,7 @@
 }
 .ln-message[data-lm-type="quest"] .ln-frame,
 .ln-message[data-lm-type="levelup"] .ln-frame {
-  min-height: 210px;
+  min-height: 235px;
 }
 .ln-message[data-lm-type="quest"] header,
 .ln-message[data-lm-type="levelup"] header {
@@ -150,6 +152,43 @@
 .ln-message[data-lm-type="quest"] header i,
 .ln-message[data-lm-type="levelup"] header i {
   font-size: 20px;
+}
+.ln-message[data-lm-type="alert"] .ln-frame {
+  --lm-accent: #ffc857;
+  --lm-emitter: #ffe5a0;
+  --lm-stat-bg: rgba(255, 200, 87, 0.16);
+  --lm-shadow: 0 0 34px rgba(255, 180, 55, 0.32), 0 20px 55px rgba(0, 0, 0, 0.78);
+  background:
+    radial-gradient(110% 80% at 50% -18%, rgba(255, 198, 80, 0.3), transparent 62%),
+    linear-gradient(168deg, rgba(63, 45, 20, 0.98), rgba(18, 18, 25, 0.98) 58%, rgba(9, 11, 18, 0.99));
+}
+.ln-message[data-lm-type="danger"] .ln-frame {
+  --lm-accent: #ff477e;
+  --lm-emitter: #ff9ab5;
+  --lm-stat-bg: rgba(255, 71, 126, 0.16);
+  --lm-shadow: 0 0 34px rgba(255, 30, 93, 0.34), 0 20px 55px rgba(0, 0, 0, 0.8);
+  background:
+    radial-gradient(110% 80% at 50% -18%, rgba(255, 44, 110, 0.28), transparent 62%),
+    linear-gradient(168deg, rgba(53, 16, 34, 0.98), rgba(18, 12, 25, 0.98) 58%, rgba(10, 8, 16, 0.99));
+}
+.ln-message[data-lm-type="skill"] .ln-frame {
+  --lm-accent: #56f1b0;
+  --lm-emitter: #a7ffdc;
+  --lm-stat-bg: rgba(86, 241, 176, 0.14);
+}
+.ln-message[data-lm-type="levelup"] .ln-frame {
+  --lm-accent: #ffd166;
+  --lm-emitter: #ffedaa;
+  --lm-stat-bg: rgba(255, 209, 102, 0.16);
+}
+.ln-message[data-lm-type="constellation"] .ln-frame {
+  --lm-accent: #c79aff;
+  --lm-emitter: #eadbff;
+  --lm-stat-bg: rgba(199, 154, 255, 0.16);
+}
+@keyframes lm-system-breathe {
+  0%, 100% { filter: drop-shadow(0 0 15px var(--lm-stat-bg, rgba(74, 189, 255, 0.16))); }
+  50% { filter: drop-shadow(0 0 28px var(--lm-stat-bg, rgba(74, 189, 255, 0.28))); }
 }
 .ln-message footer span {
   color: var(--lm-accent, inherit);
@@ -164,10 +203,10 @@
 /* Overlay fixo (modo overlay) */
 .ln-overlay {
   position: fixed;
-  top: 8%;
+  top: 11%;
   left: 50%;
   z-index: 90;
-  width: min(620px, 92vw);
+  width: min(780px, 90vw);
   transform: translateX(-50%);
   pointer-events: none;
   animation: lm-in 0.4s ease-out both;
@@ -193,6 +232,8 @@
   background: var(--lm-manager-bg);
 }
 .lumenn-notify-manager .lm-manager {
+  position: relative;
+  overflow: hidden;
   display: grid;
   grid-template-columns: 300px 1fr;
   height: 100%;
@@ -203,8 +244,26 @@
   --lm-manager-accent-soft: rgba(121, 201, 255, 0.14);
   --lm-manager-accent-line: rgba(121, 201, 255, 0.32);
   background:
-    linear-gradient(135deg, rgba(121, 201, 255, 0.035) 25%, transparent 25%) 0 0 / 18px 18px,
+    radial-gradient(900px 520px at 82% -10%, var(--lm-manager-accent-soft), transparent 62%),
+    radial-gradient(620px 520px at -12% 115%, rgba(38, 105, 175, 0.18), transparent 68%),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(126, 184, 236, 0.035) 32px),
+    repeating-linear-gradient(90deg, transparent 0 47px, rgba(126, 184, 236, 0.025) 48px),
     var(--lm-manager-panel);
+}
+.lumenn-notify-manager .lm-manager::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    linear-gradient(115deg, transparent 0 22%, rgba(121, 201, 255, 0.06) 22.1%, transparent 22.4%),
+    linear-gradient(295deg, transparent 0 68%, rgba(121, 201, 255, 0.045) 68.1%, transparent 68.35%);
+}
+.lumenn-notify-manager .lm-sidebar,
+.lumenn-notify-manager .lm-main {
+  position: relative;
+  z-index: 1;
 }
 .lumenn-notify-manager .lm-manager[data-lm-manager-theme="orv"] {
   --lm-manager-accent: #c49aff;
@@ -364,8 +423,8 @@
   flex-direction: column;
   min-height: 0;
   background:
-    radial-gradient(900px 420px at 85% -10%, rgba(55, 104, 153, 0.2), transparent 65%),
-    var(--lm-manager-panel);
+    radial-gradient(700px 360px at 92% 0%, var(--lm-manager-accent-soft), transparent 68%),
+    linear-gradient(135deg, rgba(8, 15, 27, 0.78), rgba(16, 25, 37, 0.92));
 }
 .lumenn-notify-manager .lm-command-header {
   display: flex;
@@ -462,6 +521,8 @@
   padding: 14px 16px 24px;
   overflow-y: auto;
   min-height: 0;
+  scrollbar-gutter: stable;
+  background: linear-gradient(90deg, rgba(4, 10, 19, 0.12), transparent 26%, rgba(4, 10, 19, 0.2));
 }
 .lumenn-notify-manager .lm-body::-webkit-scrollbar,
 .lumenn-notify-manager .lm-list::-webkit-scrollbar {
@@ -566,15 +627,17 @@
 .lumenn-notify-manager .lm-send select {
   width: 100%;
   padding: 7px 9px;
-  background: var(--lm-manager-bg);
-  border: 1px solid var(--lm-manager-line);
+  min-height: 36px;
+  background: rgba(4, 9, 17, 0.9);
+  border: 1px solid rgba(160, 194, 229, 0.28);
   border-radius: 3px;
   color: var(--lm-manager-text);
   font-family: var(--lm-font-ui, sans-serif);
-  font-size: 13px;
+  font-size: 14px;
 }
 .lumenn-notify-manager .lm-editor textarea {
   resize: vertical;
+  min-height: 78px;
 }
 .lumenn-notify-manager .lm-editor input:focus,
 .lumenn-notify-manager .lm-editor select:focus,
@@ -697,6 +760,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ln-overlay {
+    animation: none;
+  }
+  .ln-message .ln-frame {
     animation: none;
   }
 }

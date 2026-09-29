@@ -5,6 +5,12 @@ Todas as mudanças relevantes do módulo **Lumenn Notify** são registradas aqui
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.2.4] - 2026-09-29
+
+- Adiciona fundo atmosférico holográfico ao gerenciador.
+- Melhora contraste, profundidade e legibilidade dos campos e do preview.
+- Mantém a identidade visual dos temas sem sacrificar a leitura.
+
 ## [0.2.3] - 2026-09-29
 
 - Atualiza o gerenciador para uma janela 16:9 com preview mais amplo e legível.
