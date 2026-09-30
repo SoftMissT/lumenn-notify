@@ -95,11 +95,17 @@ for (const cls of [".ln-message", ".ln-frame", ".lm-manager"]) {
   if (coreCss.includes(cls)) ok(`core define ${cls}`);
   else bad(`core define ${cls}`, "seletor ausente");
 }
+if (coreCss.includes('.lumenn-notify-manager[data-lm-manager-theme="cyberpunk"]')) ok("temas alcançam a janela inteira");
+else bad("temas alcançam a janela inteira", "root da ApplicationV2 sem tokens temáticos");
 
 console.log("\n[api mínima]");
 for (const m of ["openManager", "send", "getProfiles", "saveProfile", "deleteProfile", "getGroups", "saveGroups"]) {
   if (main.includes(m)) ok(`lumenn-notify.js expõe ${m}`);
   else bad(`lumenn-notify.js expõe ${m}`, "símbolo ausente");
+}
+for (const key of ["defaultDuration", "defaultMode", "defaultSound", "maxOverlays"]) {
+  if (main.includes(`"${key}"`)) ok(`setting GM ${key} declarado`);
+  else bad(`setting GM ${key} declarado`, "chave ausente");
 }
 
 if (main.includes("renderChatMessageHTML")) ok("hook renderChatMessageHTML registrado");

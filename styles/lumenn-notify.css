@@ -231,6 +231,67 @@
   --lm-manager-focus: rgba(121, 201, 255, 0.42);
   --lm-manager-radius: 6px;
   background: var(--lm-manager-bg);
+  color: var(--lm-manager-text);
+  border-color: var(--lm-manager-line);
+}
+.lumenn-notify-manager .window-header {
+  background: linear-gradient(90deg, var(--lm-manager-bg), var(--lm-manager-panel));
+  border-bottom: 1px solid var(--lm-manager-line);
+  color: var(--lm-manager-text);
+}
+.lumenn-notify-manager .window-title,
+.lumenn-notify-manager .window-header .header-control {
+  color: var(--lm-manager-text) !important;
+}
+.lumenn-notify-manager .window-content {
+  padding: 0;
+  background: var(--lm-manager-bg);
+  color: var(--lm-manager-text);
+}
+.lumenn-notify-manager[data-lm-manager-theme="system"] {
+  --lm-manager-bg: #080d15;
+  --lm-manager-panel: #101925;
+  --lm-manager-line: rgba(151, 181, 213, 0.2);
+  --lm-manager-text: #edf5ff;
+  --lm-manager-dim: #91a4ba;
+  --lm-manager-accent: #79c9ff;
+  --lm-manager-focus: rgba(121, 201, 255, 0.42);
+}
+.lumenn-notify-manager[data-lm-manager-theme="manhwa"] {
+  --lm-manager-bg: #070611;
+  --lm-manager-panel: #120d22;
+  --lm-manager-line: rgba(196, 154, 255, 0.28);
+  --lm-manager-text: #f2edff;
+  --lm-manager-dim: #aa9ac5;
+  --lm-manager-accent: #a987ff;
+  --lm-manager-focus: rgba(169, 135, 255, 0.44);
+}
+.lumenn-notify-manager[data-lm-manager-theme="fantasy"] {
+  --lm-manager-bg: #17110b;
+  --lm-manager-panel: #26180c;
+  --lm-manager-line: rgba(224, 178, 93, 0.28);
+  --lm-manager-text: #fff1d1;
+  --lm-manager-dim: #c8a673;
+  --lm-manager-accent: #e0b25d;
+  --lm-manager-focus: rgba(224, 178, 93, 0.42);
+}
+.lumenn-notify-manager[data-lm-manager-theme="cyberpunk"] {
+  --lm-manager-bg: #080a12;
+  --lm-manager-panel: #0d111a;
+  --lm-manager-line: rgba(56, 244, 232, 0.3);
+  --lm-manager-text: #e5fffd;
+  --lm-manager-dim: #7ca8a5;
+  --lm-manager-accent: #38f4e8;
+  --lm-manager-focus: rgba(255, 61, 174, 0.46);
+}
+.lumenn-notify-manager[data-lm-manager-theme="horror"] {
+  --lm-manager-bg: #090b0a;
+  --lm-manager-panel: #151c13;
+  --lm-manager-line: rgba(164, 185, 114, 0.28);
+  --lm-manager-text: #e7efd7;
+  --lm-manager-dim: #9dab88;
+  --lm-manager-accent: #c7e39a;
+  --lm-manager-focus: rgba(192, 68, 55, 0.45);
 }
 .lumenn-notify-manager .lm-manager {
   position: relative;
@@ -241,9 +302,8 @@
   min-height: 0;
   color: var(--lm-manager-text);
   font-family: var(--lm-font-ui, sans-serif);
-  --lm-manager-accent: #79c9ff;
-  --lm-manager-accent-soft: rgba(121, 201, 255, 0.14);
-  --lm-manager-accent-line: rgba(121, 201, 255, 0.32);
+  --lm-manager-accent-soft: color-mix(in srgb, var(--lm-manager-accent) 16%, transparent);
+  --lm-manager-accent-line: color-mix(in srgb, var(--lm-manager-accent) 42%, transparent);
   background: var(--lm-manager-bg) url("../assets/manager-bg-16x9.png") center / cover no-repeat;
 }
 .lumenn-notify-manager .lm-manager::before {
@@ -254,9 +314,9 @@
   z-index: 0;
   opacity: 0.92;
   background:
-    linear-gradient(90deg, rgba(3, 8, 17, 0.92), rgba(5, 12, 25, 0.72) 48%, rgba(3, 8, 17, 0.9)),
-    repeating-linear-gradient(0deg, transparent 0 31px, rgba(126, 184, 236, 0.045) 32px),
-    repeating-linear-gradient(90deg, transparent 0 47px, rgba(126, 184, 236, 0.032) 48px),
+    linear-gradient(90deg, color-mix(in srgb, var(--lm-manager-bg) 94%, transparent), color-mix(in srgb, var(--lm-manager-panel) 72%, transparent) 48%, color-mix(in srgb, var(--lm-manager-bg) 92%, transparent)),
+    repeating-linear-gradient(0deg, transparent 0 31px, color-mix(in srgb, var(--lm-manager-accent) 8%, transparent) 32px),
+    repeating-linear-gradient(90deg, transparent 0 47px, color-mix(in srgb, var(--lm-manager-accent) 6%, transparent) 48px),
     linear-gradient(115deg, transparent 0 22%, var(--lm-manager-accent-soft) 22.1%, transparent 22.4%),
     linear-gradient(295deg, transparent 0 68%, var(--lm-manager-accent-soft) 68.1%, transparent 68.35%);
 }
@@ -265,37 +325,6 @@
   position: relative;
   z-index: 1;
 }
-.lumenn-notify-manager .lm-manager[data-lm-manager-theme="orv"] {
-  --lm-manager-accent: #c49aff;
-  --lm-manager-accent-soft: rgba(196, 154, 255, 0.16);
-  --lm-manager-accent-line: rgba(196, 154, 255, 0.38);
-}
-.lumenn-notify-manager .lm-manager[data-lm-manager-theme="manhwa"] {
-  --lm-manager-accent: #a987ff;
-  --lm-manager-accent-soft: rgba(169, 135, 255, 0.18);
-  --lm-manager-accent-line: rgba(169, 135, 255, 0.42);
-  --lm-manager-focus: rgba(169, 135, 255, 0.44);
-  --lm-manager-bg: #070611;
-}
-.lumenn-notify-manager .lm-manager[data-lm-manager-theme="cyberpunk"] {
-  --lm-manager-accent: #38f4e8;
-  --lm-manager-accent-soft: rgba(56, 244, 232, 0.14);
-  --lm-manager-accent-line: rgba(56, 244, 232, 0.42);
-  --lm-manager-focus: rgba(255, 61, 174, 0.46);
-  --lm-manager-bg: #080a12;
-}
-.lumenn-notify-manager .lm-manager[data-lm-manager-theme="horror"] {
-  --lm-manager-accent: #c7e39a;
-  --lm-manager-accent-soft: rgba(113, 150, 82, 0.16);
-  --lm-manager-accent-line: rgba(164, 185, 114, 0.38);
-  --lm-manager-focus: rgba(192, 68, 55, 0.45);
-  --lm-manager-bg: #090b0a;
-}
-.lumenn-notify-manager .lm-manager[data-lm-manager-theme="fantasy"] {
-  --lm-manager-accent: #e0b25d;
-  --lm-manager-accent-soft: rgba(224, 178, 93, 0.16);
-  --lm-manager-accent-line: rgba(224, 178, 93, 0.38);
-}
 .lumenn-notify-manager .lm-sidebar {
   display: flex;
   flex-direction: column;
@@ -303,8 +332,8 @@
   padding: 14px;
   border-right: 1px solid var(--lm-manager-line);
   background:
-    linear-gradient(180deg, rgba(18, 42, 70, 0.78), rgba(4, 10, 19, 0.96) 38%),
-    rgba(4, 10, 19, 0.86);
+    linear-gradient(180deg, color-mix(in srgb, var(--lm-manager-accent) 18%, var(--lm-manager-panel)), var(--lm-manager-bg) 48%),
+    var(--lm-manager-bg);
   backdrop-filter: blur(8px);
   box-shadow: inset -1px 0 rgba(255, 255, 255, 0.035);
   min-height: 0;
@@ -446,7 +475,7 @@
   min-height: 0;
   background:
     radial-gradient(700px 360px at 92% 0%, var(--lm-manager-accent-soft), transparent 68%),
-    linear-gradient(135deg, rgba(8, 15, 27, 0.74), rgba(10, 19, 32, 0.82));
+    linear-gradient(135deg, color-mix(in srgb, var(--lm-manager-bg) 74%, transparent), color-mix(in srgb, var(--lm-manager-panel) 82%, transparent));
   backdrop-filter: blur(5px);
 }
 .lumenn-notify-manager .lm-command-header {
@@ -482,7 +511,7 @@
   font-size: 12px;
 }
 .lumenn-notify-manager .lm-online {
-  color: #8dffc4;
+  color: var(--lm-manager-accent);
   white-space: nowrap;
 }
 .lumenn-notify-manager .lm-online i {
@@ -591,8 +620,8 @@
   width: 100%;
   padding: 7px 9px;
   min-height: 36px;
-  background: rgba(4, 9, 17, 0.9);
-  border: 1px solid rgba(160, 194, 229, 0.28);
+  background: color-mix(in srgb, var(--lm-manager-bg) 92%, black);
+  border: 1px solid var(--lm-manager-line);
   border-radius: 3px;
   color: var(--lm-manager-text);
   font-family: var(--lm-font-ui, sans-serif);
@@ -660,7 +689,7 @@
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 0, var(--lm-manager-accent-soft), transparent 55%),
-    rgba(5, 10, 17, 0.84);
+    color-mix(in srgb, var(--lm-manager-panel) 84%, transparent);
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.05), 0 12px 30px rgba(0, 0, 0, 0.18);
 }
 .lumenn-notify-manager .lm-preview-box > .ln-message {

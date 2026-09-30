@@ -21,7 +21,8 @@ gerenciador, preview, chat e overlay.
 - **Presets nativos protegidos**: `system`, `quest`, `alert`, `danger`, `skill`,
   `levelup`, `constellation` somente leitura; duplique para editar.
 - **Destinatários**: todos, só GM, um jogador ou um grupo salvo.
-- **Temas**: `system`, `manhwa`, `fantasy`, `cyberpunk` e `horror`, configurados em **Configurações → Configurar módulos → Lumenn Notify**.
+- **Temas**: `system`, `manhwa`, `fantasy`, `cyberpunk` e `horror`, configurados em **Configurações de Jogo → Lumenn Notify**.
+- **Configurações do GM**: duração, modo e som padrão de perfis novos, além do limite de overlays simultâneos.
 - **Envio**: overlay + cartão no chat, com snapshot do perfil gravado na mensagem.
 - **Prévia confiável**: o botão **Usar** envia exatamente o rascunho mostrado na prévia, incluindo texto, stats e destinatário; o tema vem da configuração global.
 - **Compatibilidade**: `window.SLS.send(...)` e `window.SLS.abrir()` continuam
@@ -49,6 +50,10 @@ https://github.com/SoftMissT/lumenn-notify/releases/latest/download/module.json
    - `game.lumennNotify.openManager()` no console.
 3. Escolha um perfil, ajuste texto/destinatário, confira a prévia e clique
    em **Enviar agora**.
+
+As opções globais ficam em **Configurações de Jogo → Lumenn Notify**. Depois de
+alterar o tema, a janela do gerenciador e os cartões usam a nova identidade sem
+recarregar; as demais opções definem os defaults para perfis novos.
 
 ### API
 

@@ -5,6 +5,15 @@ Todas as mudanças relevantes do módulo **Lumenn Notify** são registradas aqui
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.3.0] - 2026-09-30
+
+- Faz o tema global alcançar toda a janela `ApplicationV2` (chrome do Foundry,
+  header, conteúdo, sidebar, toolbar e editor), não apenas a prévia/cartão.
+- Registra configurações de GM para duração, modo, som padrão e limite de
+  overlays simultâneos.
+- Preserva duração `0` como "até clicar" e usa os defaults configurados em
+  perfis novos.
+
 ## [0.2.9] - 2026-09-30
 
 - Publica a correção do ChatLog e os cinco temas globais implementados na versão 0.2.8 local.

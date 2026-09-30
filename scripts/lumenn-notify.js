@@ -4,8 +4,11 @@ const NS = "lumenn-notify";
 const KEY = "library";
 const GROUPS_KEY = "groups";
 const THEME_KEY = "theme";
+const DEFAULT_DURATION_KEY = "defaultDuration";
+const DEFAULT_MODE_KEY = "defaultMode";
+const DEFAULT_SOUND_KEY = "defaultSound";
+const MAX_OVERLAYS_KEY = "maxOverlays";
 const SCHEMA = 1;
-const OVERLAY_MAX = 5;
 const THEME_CHOICES = {
   system: "System · Azul técnico",
   manhwa: "Manhwa dark · ORV",
@@ -30,6 +33,17 @@ const configuredTheme = () => {
   try { return normalizeTheme(game.settings.get(NS, THEME_KEY)); } catch { return "system"; }
 };
 const normalizeTheme = (theme) => ({ orv: "manhwa", "manhwa-dark": "manhwa" }[String(theme ?? "")] ?? (THEME_CHOICES[theme] ? theme : "system"));
+const settingValue = (key, fallback) => {
+  try { return globalThis.game?.settings?.get(NS, key) ?? fallback; } catch { return fallback; }
+};
+const clampDurationMs = (value, fallback = 7000) => {
+  const number = Number(value);
+  return Math.min(60000, Math.max(0, Number.isFinite(number) ? number : fallback));
+};
+const defaultDurationMs = () => clampDurationMs(Number(settingValue(DEFAULT_DURATION_KEY, 7)) * 1000);
+const defaultMode = () => ["overlay", "chat", "both"].includes(settingValue(DEFAULT_MODE_KEY, "both")) ? settingValue(DEFAULT_MODE_KEY, "both") : "both";
+const defaultSound = () => settingValue(DEFAULT_SOUND_KEY, true) !== false;
+const overlayMax = () => Math.min(10, Math.max(1, Number(settingValue(MAX_OVERLAYS_KEY, 5)) || 5));
 
 const CONTROL_NAME = "lumenn-notify";
 const CONTROL_TOOL = "open-manager";
@@ -64,6 +78,9 @@ function normalizeIcon(icon) {
 
 function normalizeProfile(raw, id = uid()) {
   const p = raw ?? {};
+  const rawDuration = p.duration ?? p.duracao;
+  const rawMode = p.mode ?? (p.modo === "ambos" ? "both" : p.modo);
+  const rawSound = p.sound ?? (p.som === undefined ? undefined : p.som !== false);
   return {
     id: p.id ?? id,
     name: String(p.name ?? p.rotulo ?? id),
@@ -77,9 +94,9 @@ function normalizeProfile(raw, id = uid()) {
     tag: p.tag ?? "",
     footer: p.footer ?? p.rodape ?? "SISTEMA",
     stats: Array.isArray(p.stats) ? p.stats : [],
-    duration: Math.max(1500, Number(p.duration ?? p.duracao ?? 7000) || 7000),
-    mode: p.mode ?? (p.modo === "ambos" ? "both" : p.modo ?? "both"),
-    sound: p.sound ?? p.som !== false
+    duration: rawDuration === undefined ? defaultDurationMs() : clampDurationMs(rawDuration),
+    mode: ["overlay", "chat", "both"].includes(rawMode) ? rawMode : defaultMode(),
+    sound: rawSound === undefined ? defaultSound() : Boolean(rawSound)
   };
 }
 
@@ -95,8 +112,11 @@ function migrateLegacy() {
 }
 
 function registerSettings() {
-  if (!game.settings.settings.has(`${NS}.${KEY}`)) game.settings.register(NS, KEY, { scope: "world", config: false, type: Object, default: {} });
-  if (!game.settings.settings.has(`${NS}.${GROUPS_KEY}`)) game.settings.register(NS, GROUPS_KEY, { scope: "world", config: false, type: Object, default: {} });
+  const register = (key, config) => {
+    if (!game.settings.settings.has(`${NS}.${key}`)) game.settings.register(NS, key, config);
+  };
+  register(KEY, { scope: "world", config: false, type: Object, default: {} });
+  register(GROUPS_KEY, { scope: "world", config: false, type: Object, default: {} });
   const themeConfig = {
     name: "Tema global das mensagens",
     hint: "Define a identidade visual usada pelo Lumenn Notify no chat, overlay e prévia.",
@@ -109,11 +129,34 @@ function registerSettings() {
     onChange: (theme) => Hooks.callAll("lumennNotifyThemeChanged", normalizeTheme(theme)),
   };
   const themeSettingKey = `${NS}.${THEME_KEY}`;
-  if (!game.settings.settings.has(themeSettingKey)) game.settings.register(NS, THEME_KEY, themeConfig);
+  if (!game.settings.settings.has(themeSettingKey)) register(THEME_KEY, themeConfig);
   else {
     const existing = game.settings.settings.get?.(themeSettingKey);
     if (existing && typeof existing === "object") Object.assign(existing, themeConfig);
   }
+  register(DEFAULT_DURATION_KEY, {
+    name: "Duração padrão do overlay",
+    hint: "Duração dos perfis novos em segundos. Zero mantém a mensagem até o clique.",
+    scope: "world", config: true, type: Number, default: 7,
+    range: { min: 0, max: 60, step: 1 },
+  });
+  register(DEFAULT_MODE_KEY, {
+    name: "Modo padrão dos perfis",
+    hint: "Canal inicial usado por perfis novos.",
+    scope: "world", config: true, type: String, default: "both",
+    choices: { both: "Chat + overlay", overlay: "Somente overlay", chat: "Somente chat" },
+  });
+  register(DEFAULT_SOUND_KEY, {
+    name: "Som padrão dos perfis",
+    hint: "Ativa som automaticamente em perfis novos.",
+    scope: "world", config: true, type: Boolean, default: true,
+  });
+  register(MAX_OVERLAYS_KEY, {
+    name: "Limite de overlays simultâneos",
+    hint: "Quantidade máxima de cartões sobrepostos na tela de cada jogador.",
+    scope: "world", config: true, type: Number, default: 5,
+    range: { min: 1, max: 10, step: 1 },
+  });
 }
 
 function getProfiles() {
@@ -206,7 +249,7 @@ function showOverlay(snapshot) {
   el.addEventListener("click", remove);
   document.body.appendChild(el);
   activeOverlays.add(el);
-  while (activeOverlays.size > OVERLAY_MAX) remove([...activeOverlays][0]);
+  while (activeOverlays.size > overlayMax()) remove([...activeOverlays][0]);
   if (p.sound) playOverlaySound();
   const duration = Number(p.duration ?? 0);
   if (duration > 0 && !reduced) setTimeout(remove, duration);
@@ -258,7 +301,7 @@ Hooks.once("ready", async () => {
   }
   const api = { openManager: () => openManager(api), send, getProfile: findProfile, getProfiles, saveProfile, deleteProfile, getGroups, saveGroups, renderMessage, normalizeProfile, BUILTINS, getTheme: configuredTheme };
   game.lumennNotify = api;
-  window.SLS = { __v: "module-0.2.0", abrir: api.openManager, send: (data, body) => typeof data === "string" ? send({ profile: data, body }) : send(data), perfis: BUILTINS };
+  window.SLS = { __v: "module-0.3.0", abrir: api.openManager, send: (data, body) => typeof data === "string" ? send({ profile: data, body }) : send(data), perfis: BUILTINS };
 });
 
 export { BUILTINS, getProfiles, getGroups, normalizeProfile, renderMessage, send, saveProfile, deleteProfile };

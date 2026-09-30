@@ -17,6 +17,9 @@ const configuredTheme = () => {
     return value === "orv" || value === "manhwa-dark" ? "manhwa" : value;
   } catch { return "system"; }
 };
+const settingValue = (key, fallback) => {
+  try { return game.settings.get(NS, key) ?? fallback; } catch { return fallback; }
+};
 
 function selectOptions(values, selected, labelFn) {
   return values
@@ -118,6 +121,7 @@ class LumennNotifyManager extends ApplicationV2 {
 
   _onRender(context, options) {
     super._onRender?.(context, options);
+    this.#syncManagerTheme();
     const search = this.element.querySelector("#lm-search");
     if (search) search.addEventListener("input", (event) => {
       this.state.query = event.target.value;
@@ -142,6 +146,10 @@ class LumennNotifyManager extends ApplicationV2 {
     });
     this.#syncRecipientVisibility();
     this.#refreshPreview();
+  }
+
+  #syncManagerTheme() {
+    if (this.element) this.element.dataset.lmManagerTheme = configuredTheme();
   }
 
   #draft() {
@@ -182,6 +190,7 @@ class LumennNotifyManager extends ApplicationV2 {
     const target = this.element.querySelector("[data-el='preview']");
     if (!target) return;
     const p = this.#draft();
+    this.#syncManagerTheme();
     this.element.querySelector(".lm-manager")?.setAttribute("data-lm-manager-theme", p.theme);
     target.dataset.lmTheme = p.theme;
     target.innerHTML = this.api.renderMessage({ ...p, builtin: false });
@@ -411,7 +420,17 @@ class LumennNotifyManager extends ApplicationV2 {
 
   static async #newProfile(event, target) {
     const id = `profile-${foundry.utils.randomID(8)}`;
-    await this.api.saveProfile({ id, name: "Novo perfil", type: "custom", theme: configuredTheme(), body: "", builtin: false });
+    await this.api.saveProfile({
+      id,
+      name: "Novo perfil",
+      type: "custom",
+      theme: configuredTheme(),
+      body: "",
+      duration: Number(settingValue("defaultDuration", 7)) * 1000,
+      mode: settingValue("defaultMode", "both"),
+      sound: settingValue("defaultSound", true) !== false,
+      builtin: false,
+    });
     this.state.selectedId = id;
     this.state.error = "";
     this.render(true);

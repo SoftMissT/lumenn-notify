@@ -145,6 +145,16 @@ if (hooks.list.ready) {
 if (globalThis.game.lumennNotify?.openManager) ok("game.lumennNotify exposto");
 else bad("game.lumennNotify exposto", "api ausente após ready");
 
+console.log("\n[configurações GM]");
+for (const key of ["theme", "defaultDuration", "defaultMode", "defaultSound", "maxOverlays"]) {
+  const config = settingConfigs.get(`lumenn-notify.${key}`);
+  if (config?.config === true) ok(`setting GM ${key}`);
+  else bad(`setting GM ${key}`, "configuração não registrada");
+}
+const clickToClose = globalThis.game.lumennNotify.normalizeProfile({ duration: 0 });
+if (clickToClose.duration === 0) ok("duração zero preservada");
+else bad("duração zero preservada", `${clickToClose.duration}ms`);
+
 console.log("\n[presets nativos]");
 const profiles = globalThis.game.lumennNotify.getProfiles();
 const builtinIds = ["system", "quest", "alert", "danger", "skill", "levelup", "constellation"];
