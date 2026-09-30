@@ -6,6 +6,13 @@ const GROUPS_KEY = "groups";
 const THEME_KEY = "theme";
 const SCHEMA = 1;
 const OVERLAY_MAX = 5;
+const THEME_CHOICES = {
+  system: "System · Azul técnico",
+  manhwa: "Manhwa dark · ORV",
+  fantasy: "Fantasia épica · Grimório",
+  cyberpunk: "Cyberpunk · Neon",
+  horror: "Terror · Ruína",
+};
 
 const BUILTINS = {
   system: { name: "Sistema", type: "system", theme: "system", icon: "fa-solid fa-bell", title: "SISTEMA", body: "Requisitos ocultos cumpridos. Recompensa liberada.", emitter: "Sistema", tag: "", footer: "SISTEMA", stats: [], duration: 7000, mode: "both", sound: true },
@@ -20,8 +27,9 @@ const BUILTINS = {
 const uid = (prefix = "profile") => `${prefix}-${foundry.utils.randomID(8)}`;
 const isGM = () => Boolean(game.user?.isGM);
 const configuredTheme = () => {
-  try { return game.settings.get(NS, THEME_KEY) ?? "system"; } catch { return "system"; }
+  try { return normalizeTheme(game.settings.get(NS, THEME_KEY)); } catch { return "system"; }
 };
+const normalizeTheme = (theme) => ({ orv: "manhwa", "manhwa-dark": "manhwa" }[String(theme ?? "")] ?? (THEME_CHOICES[theme] ? theme : "system"));
 
 const CONTROL_NAME = "lumenn-notify";
 const CONTROL_TOOL = "open-manager";
@@ -61,7 +69,7 @@ function normalizeProfile(raw, id = uid()) {
     name: String(p.name ?? p.rotulo ?? id),
     builtin: Boolean(p.builtin),
     type: p.type ?? p.tipo ?? "custom",
-    theme: p.theme ?? "system",
+    theme: normalizeTheme(p.theme ?? "system"),
     icon: normalizeIcon(p.icon ?? p.icone ?? "fa-solid fa-satellite-dish"),
     title: p.title ?? p.titulo ?? "NOVA MENSAGEM",
     body: p.body ?? p.corpo ?? "",
@@ -89,16 +97,23 @@ function migrateLegacy() {
 function registerSettings() {
   if (!game.settings.settings.has(`${NS}.${KEY}`)) game.settings.register(NS, KEY, { scope: "world", config: false, type: Object, default: {} });
   if (!game.settings.settings.has(`${NS}.${GROUPS_KEY}`)) game.settings.register(NS, GROUPS_KEY, { scope: "world", config: false, type: Object, default: {} });
-  if (!game.settings.settings.has(`${NS}.${THEME_KEY}`)) game.settings.register(NS, THEME_KEY, {
+  const themeConfig = {
     name: "Tema global das mensagens",
     hint: "Define a identidade visual usada pelo Lumenn Notify no chat, overlay e prévia.",
     scope: "world",
     config: true,
     requiresReload: false,
     type: String,
-    choices: { system: "System · Azul técnico", orv: "ORV · Constelações", fantasy: "Fantasy · Grimório" },
+    choices: THEME_CHOICES,
     default: "system",
-  });
+    onChange: (theme) => Hooks.callAll("lumennNotifyThemeChanged", normalizeTheme(theme)),
+  };
+  const themeSettingKey = `${NS}.${THEME_KEY}`;
+  if (!game.settings.settings.has(themeSettingKey)) game.settings.register(NS, THEME_KEY, themeConfig);
+  else {
+    const existing = game.settings.settings.get?.(themeSettingKey);
+    if (existing && typeof existing === "object") Object.assign(existing, themeConfig);
+  }
 }
 
 function getProfiles() {
@@ -137,7 +152,7 @@ async function deleteProfile(id) {
 
 function renderMessage(profile, data = {}) {
   const p = normalizeProfile({ ...profile, ...data });
-  p.theme = configuredTheme();
+  p.theme = normalizeTheme(p.theme);
   const stats = (p.stats ?? []).map((s) => `<div class="ln-stat"><span>${foundry.utils.escapeHTML(s.label ?? s.rotulo ?? "")}</span><b>${foundry.utils.escapeHTML(s.value ?? s.valor ?? "")}</b></div>`).join("");
   return `<div class="ln-message" data-lm-theme="${foundry.utils.escapeHTML(p.theme)}" data-lm-type="${foundry.utils.escapeHTML(p.type)}"><div class="ln-frame"><div class="ln-tag">${foundry.utils.escapeHTML(p.tag)}</div><header><i class="${foundry.utils.escapeHTML(p.icon)}"></i><h2>${foundry.utils.escapeHTML(p.title)}</h2></header><div class="ln-origin"><i class="fa-solid fa-satellite-dish"></i>${foundry.utils.escapeHTML(p.emitter)}</div><p>${foundry.utils.escapeHTML(p.body).replace(/\n/g, "<br>")}</p>${stats ? `<div class="ln-stats">${stats}</div>` : ""}<footer><span>◆</span>${foundry.utils.escapeHTML(p.footer)}</footer></div></div>`;
 }
@@ -162,7 +177,6 @@ async function send(data = {}) {
     sound: null,
     flags: { [NS]: { snapshot } }
   });
-  if (mode === "overlay" && message && whisper.length === 0) setTimeout(() => message.delete().catch(() => {}), effective.duration + 1200);
   return message;
 }
 
@@ -176,27 +190,37 @@ function playOverlaySound() {
   }
 }
 
-let overlays = 0;
+const activeOverlays = new Set();
 function showOverlay(snapshot) {
   const p = snapshot?.profile;
   if (!p) return;
   const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
   const el = document.createElement("div");
   el.className = "ln-overlay";
-  el.dataset.lmTheme = p.theme;
+  el.dataset.lmTheme = normalizeTheme(p.theme);
   el.innerHTML = renderMessage(p);
   const remove = () => {
+    if (!activeOverlays.delete(el)) return;
     el.remove();
-    overlays = Math.max(0, overlays - 1);
   };
   el.addEventListener("click", remove);
   document.body.appendChild(el);
-  overlays += 1;
-  if (overlays > OVERLAY_MAX) document.querySelectorAll(".ln-overlay")[0]?.remove();
+  activeOverlays.add(el);
+  while (activeOverlays.size > OVERLAY_MAX) remove([...activeOverlays][0]);
   if (p.sound) playOverlaySound();
   const duration = Number(p.duration ?? 0);
   if (duration > 0 && !reduced) setTimeout(remove, duration);
 }
+
+Hooks.on("renderChatMessageHTML", (message, html) => {
+  const snapshot = message.getFlag?.(NS, "snapshot");
+  if (!snapshot || !html?.classList) return;
+  const mode = snapshot.profile?.mode ?? "both";
+  html.classList.add("lumenn-chat-message");
+  html.dataset.lmTheme = normalizeTheme(snapshot.profile?.theme);
+  html.dataset.lmMode = mode;
+  if (mode === "overlay") html.classList.add("lumenn-chat-message--overlay-only");
+});
 
 Hooks.on("createChatMessage", (message) => {
   const snapshot = message.getFlag?.(NS, "snapshot");
@@ -232,7 +256,7 @@ Hooks.once("ready", async () => {
     const migrated = migrateLegacy();
     if (Object.keys(migrated).length) await saveProfiles(migrated);
   }
-  const api = { openManager: () => openManager(api), send, getProfile: findProfile, getProfiles, saveProfile, deleteProfile, getGroups, saveGroups, renderMessage, normalizeProfile, BUILTINS };
+  const api = { openManager: () => openManager(api), send, getProfile: findProfile, getProfiles, saveProfile, deleteProfile, getGroups, saveGroups, renderMessage, normalizeProfile, BUILTINS, getTheme: configuredTheme };
   game.lumennNotify = api;
   window.SLS = { __v: "module-0.2.0", abrir: api.openManager, send: (data, body) => typeof data === "string" ? send({ profile: data, body }) : send(data), perfis: BUILTINS };
 });

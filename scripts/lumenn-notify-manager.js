@@ -3,9 +3,19 @@ const NS = "lumenn-notify";
 const { ApplicationV2, DialogV2 } = foundry.applications.api;
 
 const esc = (value) => foundry.utils.escapeHTML(String(value ?? ""));
-const themeLabels = { system: "System", orv: "ORV", fantasy: "Fantasy" };
+const themeLabels = {
+  system: "System",
+  manhwa: "Manhwa dark",
+  orv: "Manhwa dark",
+  fantasy: "Fantasia épica",
+  cyberpunk: "Cyberpunk",
+  horror: "Terror",
+};
 const configuredTheme = () => {
-  try { return game.settings.get("lumenn-notify", "theme") ?? "system"; } catch { return "system"; }
+  try {
+    const value = game.settings.get("lumenn-notify", "theme") ?? "system";
+    return value === "orv" || value === "manhwa-dark" ? "manhwa" : value;
+  } catch { return "system"; }
 };
 
 function selectOptions(values, selected, labelFn) {
@@ -81,6 +91,13 @@ class LumennNotifyManager extends ApplicationV2 {
     super(options);
     this.api = api;
     this._lumennState = { selectedId: null, selectedGroupId: null, query: "", tab: "profiles", error: "", recipient: "all" };
+    this._onThemeChange = () => this.render(true);
+    Hooks.on("lumennNotifyThemeChanged", this._onThemeChange);
+  }
+
+  async close(options) {
+    Hooks.off("lumennNotifyThemeChanged", this._onThemeChange);
+    return super.close(options);
   }
 
   get state() {
@@ -288,7 +305,7 @@ class LumennNotifyManager extends ApplicationV2 {
           </div>
           <div class="lm-preview">
             <div class="lm-preview-label">Prévia real</div>
-            <div class="lm-preview-box" data-el="preview" data-lm-theme="${esc(s.theme ?? "system")}">${this.api.renderMessage({ ...s, builtin: false })}</div>
+            <div class="lm-preview-box" data-el="preview" data-lm-theme="${esc(configuredTheme())}">${this.api.renderMessage({ ...s, theme: configuredTheme(), builtin: false })}</div>
           </div>
         </div>
       </div>
@@ -322,7 +339,7 @@ class LumennNotifyManager extends ApplicationV2 {
       .join("");
     const g = selectedGroup ?? {};
     return `
-    <div class="lm-manager">
+    <div class="lm-manager" data-lm-manager-theme="${esc(configuredTheme())}">
       <div class="lm-sidebar">
         <div class="lm-search-wrap">
           <i class="fa-solid fa-magnifying-glass"></i>

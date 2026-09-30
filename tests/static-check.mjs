@@ -74,7 +74,8 @@ for (const imp of managerImport) {
 }
 
 console.log("\n[temas isolados]");
-for (const theme of ["system", "orv", "fantasy"]) {
+const themes = ["system", "manhwa", "fantasy", "cyberpunk", "horror"];
+for (const theme of themes) {
   const css = read(`styles/themes/${theme}.css`) ?? "";
   if (!css) {
     bad(`styles/themes/${theme}.css existe`, "arquivo ausente");
@@ -82,7 +83,7 @@ for (const theme of ["system", "orv", "fantasy"]) {
   }
   if (css.includes(`[data-lm-theme="${theme}"]`)) ok(`tema ${theme} escopado`);
   else bad(`tema ${theme} escopado`, "sem seletor [data-lm-theme]");
-  const others = ["system", "orv", "fantasy"].filter((t) => t !== theme);
+  const others = themes.filter((t) => t !== theme);
   const leaked = others.filter((t) => css.includes(`[data-lm-theme="${t}"]`));
   if (!leaked.length) ok(`tema ${theme} não vaza para outros`);
   else bad(`tema ${theme} não vaza`, `seletores de ${leaked.join(", ")}`);
@@ -100,6 +101,11 @@ for (const m of ["openManager", "send", "getProfiles", "saveProfile", "deletePro
   if (main.includes(m)) ok(`lumenn-notify.js expõe ${m}`);
   else bad(`lumenn-notify.js expõe ${m}`, "símbolo ausente");
 }
+
+if (main.includes("renderChatMessageHTML")) ok("hook renderChatMessageHTML registrado");
+else bad("hook renderChatMessageHTML registrado", "ausente");
+if (!coreCss.includes(":has(.ln-message)")) ok("CSS do ChatLog não usa :has");
+else bad("CSS do ChatLog não usa :has", "seletor estrutural frágil");
 
 if (failed) {
   console.error(`\nFAIL · ${failed} check(s) falharam`);

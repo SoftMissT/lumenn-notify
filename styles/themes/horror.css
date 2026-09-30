@@ -1,0 +1,26 @@
+/* Lumenn Notify · Horror — arquivo em decomposição */
+[data-lm-theme="horror"] .ln-frame {
+  --lm-bg: #070907;
+  --lm-surface: #111510;
+  --lm-surface-raised: #1a1e15;
+  --lm-fg: #e7e9d8;
+  --lm-dim: #a4aa8c;
+  --lm-accent: #c7e39a;
+  --lm-accent-2: #b84438;
+  --lm-border: #82935c;
+  --lm-emitter: #c0c99d;
+  --lm-stat-bg: rgba(130, 147, 92, 0.14);
+  --lm-glow: rgba(184, 68, 56, 0.27);
+  --lm-radius: 1px;
+  --lm-cut: polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px));
+  --lm-font-display: Georgia, "Times New Roman", serif;
+  --lm-animation: lm-horror-breathe 6s ease-in-out infinite;
+  background:
+    radial-gradient(ellipse at 62% 18%, rgba(199, 227, 154, 0.11), transparent 34%),
+    linear-gradient(165deg, #37432e 0%, #171c15 46%, #060807 100%);
+}
+[data-lm-theme="horror"] .ln-frame::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse, transparent 35%, rgba(0, 0, 0, 0.48) 100%); pointer-events: none; }
+[data-lm-theme="horror"] .ln-message > .ln-frame { background: linear-gradient(160deg, rgba(25, 31, 21, 0.98), rgba(8, 11, 8, 0.99)); }
+[data-lm-theme="horror"] .ln-tag { color: #d7654f; background: #090b08; border-color: #b84438; }
+[data-lm-theme="horror"] .ln-message header h2 { font-family: var(--lm-font-display); letter-spacing: 0.09em; text-shadow: 0 0 12px rgba(184, 68, 56, 0.55); }
+@keyframes lm-horror-breathe { 0%, 100% { filter: drop-shadow(0 0 10px rgba(184, 68, 56, 0.16)); } 50% { filter: drop-shadow(0 0 22px rgba(184, 68, 56, 0.36)); } }

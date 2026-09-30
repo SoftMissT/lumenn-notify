@@ -1,0 +1,29 @@
+/* Lumenn Notify · Cyberpunk — terminal neon */
+[data-lm-theme="cyberpunk"] .ln-frame {
+  --lm-bg: #05070b;
+  --lm-surface: #0b1018;
+  --lm-surface-raised: #121a25;
+  --lm-fg: #ecffff;
+  --lm-dim: #9cb5ba;
+  --lm-accent: #38f4e8;
+  --lm-accent-2: #ff3dae;
+  --lm-border: #38f4e8;
+  --lm-emitter: #a7fff7;
+  --lm-stat-bg: rgba(56, 244, 232, 0.13);
+  --lm-glow: rgba(255, 61, 174, 0.3);
+  --lm-radius: 0;
+  --lm-cut: polygon(0 10px, 10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px));
+  --lm-font-display: "JetBrains Mono", "Cascadia Mono", monospace;
+  --lm-font-ui: "JetBrains Mono", "Cascadia Mono", monospace;
+  --lm-animation: lm-cyber-scan 2.8s steps(2, end) infinite;
+  background:
+    linear-gradient(rgba(56, 244, 232, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 61, 174, 0.08) 1px, transparent 1px),
+    linear-gradient(135deg, #15202a, #07090f 70%);
+  background-size: 22px 22px, 22px 22px, auto;
+}
+[data-lm-theme="cyberpunk"] .ln-frame::after { content: "// SIGNAL"; position: absolute; right: 18px; bottom: 10px; color: rgba(56, 244, 232, 0.35); font: 9px var(--lm-font-mono); letter-spacing: 0.18em; }
+[data-lm-theme="cyberpunk"] .ln-message > .ln-frame { background: linear-gradient(160deg, rgba(15, 30, 38, 0.98), rgba(5, 8, 14, 0.99)); }
+[data-lm-theme="cyberpunk"] .ln-tag { color: #ff3dae; background: #080a10; border-color: #ff3dae; }
+[data-lm-theme="cyberpunk"] .ln-message header { border-bottom-color: rgba(255, 61, 174, 0.6); }
+@keyframes lm-cyber-scan { 0%, 100% { filter: drop-shadow(0 0 12px rgba(56, 244, 232, 0.2)); } 50% { filter: drop-shadow(0 0 24px rgba(255, 61, 174, 0.38)); } }

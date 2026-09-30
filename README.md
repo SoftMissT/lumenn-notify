@@ -10,8 +10,9 @@
 > Mensagens narrativas, perfis e canais para **Foundry VTT v14+**.
 
 O GM cria, edita e envia cartões de Sistema, quests, perigos e mensagens de
-Constelação para todos, para um jogador ou para grupos salvos. Cada perfil pode
-usar um dos três temas CSS intercambiáveis.
+Constelação para todos, para um jogador ou para grupos salvos. O mundo escolhe
+uma identidade visual global em Game Settings e a mesma marcação é usada no
+gerenciador, preview, chat e overlay.
 
 ## Recursos
 
@@ -20,7 +21,7 @@ usar um dos três temas CSS intercambiáveis.
 - **Presets nativos protegidos**: `system`, `quest`, `alert`, `danger`, `skill`,
   `levelup`, `constellation` somente leitura; duplique para editar.
 - **Destinatários**: todos, só GM, um jogador ou um grupo salvo.
-- **Temas**: `system`, `orv`, `fantasy`, configurados em **Configurações → Configurar módulos → Lumenn Notify**.
+- **Temas**: `system`, `manhwa`, `fantasy`, `cyberpunk` e `horror`, configurados em **Configurações → Configurar módulos → Lumenn Notify**.
 - **Envio**: overlay + cartão no chat, com snapshot do perfil gravado na mensagem.
 - **Prévia confiável**: o botão **Usar** envia exatamente o rascunho mostrado na prévia, incluindo texto, stats e destinatário; o tema vem da configuração global.
 - **Compatibilidade**: `window.SLS.send(...)` e `window.SLS.abrir()` continuam
@@ -73,12 +74,15 @@ window.SLS.send("perigo", "Presença hostil detectada.");
 
 | Tema      | Direção |
 | :-------- | :------ |
-| `system`  | Sala de controle azul-marinho e cyan, com moldura técnica |
-| `orv`     | Constelações em violeta e dourado |
-| `fantasy` | Grimório em dourado e marrom |
+| `system`    | Sala de controle azul-marinho e cyan, com moldura técnica |
+| `manhwa`    | Sistema dark de manhwa, obsidiana, violeta e halo elétrico |
+| `fantasy`   | Fantasia épica, pergaminho, azul-noite e bronze heráldico |
+| `cyberpunk` | Terminal grafite, grid, ciano e magenta neon |
+| `horror`    | Arquivo em decomposição, carvão, verde mofo e ferrugem |
 
-O tema ativo é uma configuração do mundo. Isso mantém a identidade visual
-consistente para GM e jogadores no chat, overlay e prévia.
+O tema ativo é uma configuração do mundo. Mensagens novas usam o tema atual;
+mensagens já enviadas preservam o tema salvo no snapshot, mesmo depois de uma
+troca de configuração. Perfis legados com `orv` são lidos como `manhwa`.
 
 ## Desenvolvimento
 
@@ -95,7 +99,7 @@ Gate final: teste manual no Foundry v14 com GM + jogador (CT-001..CT-020).
 scripts/lumenn-notify.js          dados, presets, migração, envio, render, hook
 scripts/lumenn-notify-manager.js  gerenciador (ApplicationV2)
 styles/lumenn-notify.css          estrutura e variáveis
-styles/themes/{system,orv,fantasy}.css
+styles/themes/{system,manhwa,fantasy,cyberpunk,horror}.css
 macros/sls-open-manager.js        wrapper de abertura
 tests/                            checks estáticos + harness
 ```

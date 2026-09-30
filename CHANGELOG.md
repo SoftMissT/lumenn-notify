@@ -5,6 +5,11 @@ Todas as mudanças relevantes do módulo **Lumenn Notify** são registradas aqui
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.2.9] - 2026-09-30
+
+- Publica a correção do ChatLog e os cinco temas globais implementados na versão 0.2.8 local.
+- Atualiza o pacote para instalação pelo manifesto `v0.2.9`.
+
 ## [0.2.5] - 2026-09-29
 
 - Inclui fundo holográfico 16:9 no gerenciador, com moldura angular e constelações.
@@ -20,6 +25,15 @@ e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 - Move o controle de tema para Configurações → Configurar módulos → Lumenn Notify.
 - Renomeia a interface para Lumenn Notify e remove a marcação “Console do Monarca”.
 - Corrige a busca da aba Grupos e adiciona contexto visual para destinatários salvos.
+
+## [0.2.8] - 2026-09-30
+
+- Usa `renderChatMessageHTML` para marcar cartões sem alterar a estrutura global do ChatLog.
+- Remove `:has` e a exclusão automática de ChatMessages no modo overlay.
+- Corrige clique, limite e limpeza de overlays.
+- Adiciona os temas Manhwa dark, Fantasia épica, Cyberpunk e Terror com tokens próprios de cor, forma, tipografia e VFX.
+- Mantém o tema salvo no snapshot de cada mensagem; perfis legados `orv` migram para `manhwa`.
+- Atualiza a prévia aberta quando o tema global muda em Game Settings.
 
 ## [0.2.4] - 2026-09-29
 
@@ -79,6 +93,7 @@ e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 ## [0.2.0] - 2026-09-29
 
 ### Adicionado
+
 - **Ponto de entrada na UI (GM)**: botão na paleta de Scene Controls
   (`getSceneControlButtons`) que abre o gerenciador de mensagens.
 - Keybinding `Alt+N` (GM) para abrir o gerenciador.
@@ -87,13 +102,16 @@ e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 - Manager: métodos de seleção viraram de instância; handlers assíncronos com `await`.
 
 ### Alterado
+
 - Macro legada movida para `legacy/sistema-solo-leveling.js` (fora do pacote).
 
 ### Corrigido
+
 - O módulo não tinha como ser aberto pela UI; agora há botão e keybinding.
 
 ## [0.1.1] - 2026-09-29
 
 ### Corrigido
+
 - Manifesto `download` apontando para a tag correta (`v...`), corrigindo o 404
   do Foundry ao baixar o `module.zip`.

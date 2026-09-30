@@ -12,6 +12,7 @@ const bad = (name, why) => {
 
 const hooks = { list: {} };
 const settings = new Map();
+const settingConfigs = new Map();
 const createdMessages = [];
 
 const userList = [
@@ -30,9 +31,14 @@ globalThis.game = {
   }),
   settings: {
     settings: { has: (key) => settings.has(key) },
-    register: (ns, key, config) => settings.set(`${ns}.${key}`, config.default),
+    register: (ns, key, config) => { settings.set(`${ns}.${key}`, config.default); settingConfigs.set(`${ns}.${key}`, config); },
     get: (ns, key) => settings.get(`${ns}.${key}`),
-    set: (ns, key, value) => settings.set(`${ns}.${key}`, value),
+    set: async (ns, key, value) => {
+      settings.set(`${ns}.${key}`, value);
+      const config = settingConfigs.get(`${ns}.${key}`);
+      config?.onChange?.(value);
+      return value;
+    },
   },
   keybindings: { register: () => undefined },
 };
@@ -64,6 +70,13 @@ globalThis.Hooks = {
     if (typeof hooks.list[name] === "function") hooks.list[name] = [hooks.list[name]];
     hooks.list[name].push(fn);
   },
+  off: (name, fn) => {
+    const list = Array.isArray(hooks.list[name]) ? hooks.list[name] : [hooks.list[name]].filter(Boolean);
+    hooks.list[name] = list.filter((entry) => entry !== fn);
+  },
+  callAll: (name, ...args) => {
+    for (const fn of Array.isArray(hooks.list[name]) ? hooks.list[name] : [hooks.list[name]].filter(Boolean)) fn(...args);
+  },
 };
 
 globalThis.window = globalThis;
@@ -73,6 +86,7 @@ globalThis.document = {
   createElement: () => {
     const el = {
       className: "",
+      classList: { add: (...classes) => classes.forEach((c) => { el.className += `${el.className ? " " : ""}${c}`; }) },
       dataset: {},
       innerHTML: "",
       listeners: {},
@@ -175,7 +189,7 @@ const edited = await globalThis.game.lumennNotify.send({
   theme: "orv",
   destination: "all",
 });
-if (edited?.content.includes("Texto editado no gerenciador.") && edited?.content.includes('data-lm-theme="orv"'))
+if (edited?.content.includes("Texto editado no gerenciador.") && edited?.content.includes('data-lm-theme="manhwa"'))
   ok("send preserva rascunho editado e tema");
 else bad("send preserva rascunho editado e tema", JSON.stringify(edited));
 
@@ -201,8 +215,15 @@ else bad("grupo poda IDs inexistentes", JSON.stringify(pruned));
 
 console.log("\n[render]");
 const html = globalThis.game.lumennNotify.renderMessage(globalThis.game.lumennNotify.getProfile("constellation"));
-if (html.includes('data-lm-theme="orv"')) ok("renderMessage aplica tema");
+if (html.includes('data-lm-theme="manhwa"')) ok("renderMessage aplica tema");
 else bad("renderMessage aplica tema", "data-lm-theme ausente");
+await globalThis.game.settings.set("lumenn-notify", "theme", "horror");
+const historic = globalThis.game.lumennNotify.renderMessage({ theme: "manhwa", title: "Histórico" });
+if (historic.includes('data-lm-theme="manhwa"')) ok("snapshot preserva tema antigo");
+else bad("snapshot preserva tema antigo", historic);
+const current = await globalThis.game.lumennNotify.send({ profile: "quest", title: "Atual" });
+if (current?.content.includes('data-lm-theme="horror"')) ok("nova mensagem usa tema global atual");
+else bad("nova mensagem usa tema global atual", current?.content ?? "ausente");
 
 console.log("\n[overlay hook]");
 const createHooks = hooks.list.createChatMessage ?? [];
@@ -218,6 +239,26 @@ for (const fn of createHooks) fn(snapMsg);
 if (overlayBodies.length && overlayBodies[0].className === "ln-overlay" && overlayBodies[0].innerHTML.includes("ln-message"))
   ok("overlay exibido no receptor");
 else bad("overlay exibido no receptor", JSON.stringify(overlayBodies.map((e) => ({ className: e.className, html: e.innerHTML }))));
+
+console.log("\n[chat render hook]");
+const renderHooks = hooks.list.renderChatMessageHTML ?? [];
+const renderedChat = { classList: { values: [], add(...items) { this.values.push(...items); } }, dataset: {}, getFlag: snapMsg.getFlag };
+for (const fn of renderHooks) fn(snapMsg, renderedChat);
+if (renderedChat.classList.values.includes("lumenn-chat-message") && renderedChat.dataset.lmTheme === "manhwa") ok("chat wrapper recebe tema e classe");
+else bad("chat wrapper recebe tema e classe", JSON.stringify(renderedChat));
+
+console.log("\n[overlay-only]");
+const overlayOnly = { visible: true, author: { id: "p1" }, whisper: [], getFlag: () => ({ v: 1, profile: { mode: "overlay", theme: "cyberpunk", sound: false, duration: 0, title: "Overlay" } }) };
+const beforeOverlayOnly = createdMessages.length;
+for (const fn of renderHooks) fn(overlayOnly, renderedChat);
+if (renderedChat.classList.values.includes("lumenn-chat-message--overlay-only")) ok("overlay-only oculta cartão no ChatLog");
+else bad("overlay-only oculta cartão no ChatLog", JSON.stringify(renderedChat));
+if (createdMessages.length === beforeOverlayOnly) ok("overlay-only não cria exclusão destrutiva");
+else bad("overlay-only não cria exclusão destrutiva", "harness não deveria criar mensagens");
+for (let i = 0; i < 6; i++) for (const fn of createHooks) fn({ visible: true, author: { id: `p${i}` }, whisper: [], getFlag: () => ({ v: 1, profile: { mode: "both", theme: "horror", sound: false, duration: 0, title: `Burst ${i}` } }) });
+const liveOverlays = overlayBodies.filter((entry) => !entry.removed);
+if (liveOverlays.length <= 5) ok("overlay limita cinco cartões ativos");
+else bad("overlay limita cinco cartões ativos", `${liveOverlays.length} ativos`);
 
 console.log("\n[entrada GM: scene control]");
 const sceneHooks = hooks.list.getSceneControlButtons ?? [];
