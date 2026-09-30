@@ -470,7 +470,7 @@ class LumennNotifyManager extends ApplicationV2 {
   }
 
   static async #useProfile(event, target) {
-    const p = this.#selectedProfile();
+    const p = this.#draft();
     if (!p) return;
     const root = this.element;
     const recipient = root.querySelector('[data-lm-field="recipient"]')?.value ?? "all";
@@ -488,6 +488,7 @@ class LumennNotifyManager extends ApplicationV2 {
     }
     this.state.error = "";
     const msg = await this.api.send({
+      ...p,
       profile: p.id,
       destination: recipient,
       userId,

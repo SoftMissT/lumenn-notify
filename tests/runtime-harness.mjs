@@ -167,6 +167,17 @@ const msg = await globalThis.game.lumennNotify.send({ profile: "quest", destinat
 if (msg && msg.content.includes("NOVA MISSÃO")) ok("send cria mensagem pública com cartão");
 else bad("send cria mensagem pública com cartão", JSON.stringify(msg));
 
+const edited = await globalThis.game.lumennNotify.send({
+  profile: "quest",
+  title: "PRÉVIA CONFIRMADA",
+  body: "Texto editado no gerenciador.",
+  theme: "orv",
+  destination: "all",
+});
+if (edited?.content.includes("Texto editado no gerenciador.") && edited?.content.includes('data-lm-theme="orv"'))
+  ok("send preserva rascunho editado e tema");
+else bad("send preserva rascunho editado e tema", JSON.stringify(edited));
+
 await globalThis.game.lumennNotify.send({ profile: "quest", destination: "user", userId: "p1" });
 const whisper = createdMessages.find((m) => Array.isArray(m.whisper) && m.whisper.includes("p1"));
 if (whisper) ok("send para user gera whisper");

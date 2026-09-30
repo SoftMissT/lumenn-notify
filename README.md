@@ -22,6 +22,7 @@ usar um dos três temas CSS intercambiáveis.
 - **Destinatários**: todos, só GM, um jogador ou um grupo salvo.
 - **Temas**: `system`, `orv`, `fantasy` troca sem alterar os dados do perfil.
 - **Envio**: overlay + cartão no chat, com snapshot do perfil gravado na mensagem.
+- **Prévia confiável**: o botão **Usar** envia exatamente o rascunho mostrado na prévia, incluindo texto, stats, tema e destinatário.
 - **Compatibilidade**: `window.SLS.send(...)` e `window.SLS.abrir()` continuam
   funcionando.
 

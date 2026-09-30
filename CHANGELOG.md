@@ -10,6 +10,11 @@ e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 - Inclui fundo holográfico 16:9 no gerenciador, com moldura angular e constelações.
 - Empacota os assets visuais no módulo para que a instalação do Foundry receba o novo design.
 
+## [0.2.6] - 2026-09-30
+
+- Corrige o botão **Usar** para enviar o rascunho atual da prévia, incluindo texto, tema e stats editados.
+- Mantém a seleção de destinatário e jogador/grupo no mesmo envio.
+
 ## [0.2.4] - 2026-09-29
 
 - Adiciona fundo atmosférico holográfico ao gerenciador.
