@@ -3,6 +3,7 @@ import { openManager } from "./lumenn-notify-manager.js";
 const NS = "lumenn-notify";
 const KEY = "library";
 const GROUPS_KEY = "groups";
+const THEME_KEY = "theme";
 const SCHEMA = 1;
 const OVERLAY_MAX = 5;
 
@@ -18,6 +19,9 @@ const BUILTINS = {
 
 const uid = (prefix = "profile") => `${prefix}-${foundry.utils.randomID(8)}`;
 const isGM = () => Boolean(game.user?.isGM);
+const configuredTheme = () => {
+  try { return game.settings.get(NS, THEME_KEY) ?? "system"; } catch { return "system"; }
+};
 
 const CONTROL_NAME = "lumenn-notify";
 const CONTROL_TOOL = "open-manager";
@@ -85,6 +89,16 @@ function migrateLegacy() {
 function registerSettings() {
   if (!game.settings.settings.has(`${NS}.${KEY}`)) game.settings.register(NS, KEY, { scope: "world", config: false, type: Object, default: {} });
   if (!game.settings.settings.has(`${NS}.${GROUPS_KEY}`)) game.settings.register(NS, GROUPS_KEY, { scope: "world", config: false, type: Object, default: {} });
+  if (!game.settings.settings.has(`${NS}.${THEME_KEY}`)) game.settings.register(NS, THEME_KEY, {
+    name: "Tema global das mensagens",
+    hint: "Define a identidade visual usada pelo Lumenn Notify no chat, overlay e prévia.",
+    scope: "world",
+    config: true,
+    requiresReload: false,
+    type: String,
+    choices: { system: "System · Azul técnico", orv: "ORV · Constelações", fantasy: "Fantasy · Grimório" },
+    default: "system",
+  });
 }
 
 function getProfiles() {
@@ -123,6 +137,7 @@ async function deleteProfile(id) {
 
 function renderMessage(profile, data = {}) {
   const p = normalizeProfile({ ...profile, ...data });
+  p.theme = configuredTheme();
   const stats = (p.stats ?? []).map((s) => `<div class="ln-stat"><span>${foundry.utils.escapeHTML(s.label ?? s.rotulo ?? "")}</span><b>${foundry.utils.escapeHTML(s.value ?? s.valor ?? "")}</b></div>`).join("");
   return `<div class="ln-message" data-lm-theme="${foundry.utils.escapeHTML(p.theme)}" data-lm-type="${foundry.utils.escapeHTML(p.type)}"><div class="ln-frame"><div class="ln-tag">${foundry.utils.escapeHTML(p.tag)}</div><header><i class="${foundry.utils.escapeHTML(p.icon)}"></i><h2>${foundry.utils.escapeHTML(p.title)}</h2></header><div class="ln-origin"><i class="fa-solid fa-satellite-dish"></i>${foundry.utils.escapeHTML(p.emitter)}</div><p>${foundry.utils.escapeHTML(p.body).replace(/\n/g, "<br>")}</p>${stats ? `<div class="ln-stats">${stats}</div>` : ""}<footer><span>◆</span>${foundry.utils.escapeHTML(p.footer)}</footer></div></div>`;
 }
@@ -137,16 +152,17 @@ async function send(data = {}) {
   if (destination === "user") whisper = [data.userId ?? data.jogador].filter((id) => game.users.get(id));
   if (destination === "group") whisper = (groups[data.groupId]?.userIds ?? []).filter((id) => game.users.get(id));
   if (["user", "group"].includes(destination) && !whisper.length) return ui.notifications.warn("Lumenn Notify: destinatário inválido ou grupo vazio.");
-  const mode = data.mode ?? data.modo ?? p.mode;
-  const snapshot = { v: SCHEMA, profile: { ...p, ...data }, sentAt: new Date().toISOString() };
+  const effective = normalizeProfile({ ...p, ...data, theme: configuredTheme() });
+  const mode = effective.mode;
+  const snapshot = { v: SCHEMA, profile: effective, sentAt: new Date().toISOString() };
   const message = await ChatMessage.create({
-    content: renderMessage(p, data),
-    speaker: { alias: data.speaker ?? p.emitter },
+    content: renderMessage(effective),
+    speaker: { alias: data.speaker ?? effective.emitter },
     whisper,
     sound: null,
     flags: { [NS]: { snapshot } }
   });
-  if (mode === "overlay" && message && whisper.length === 0) setTimeout(() => message.delete().catch(() => {}), p.duration + 1200);
+  if (mode === "overlay" && message && whisper.length === 0) setTimeout(() => message.delete().catch(() => {}), effective.duration + 1200);
   return message;
 }
 

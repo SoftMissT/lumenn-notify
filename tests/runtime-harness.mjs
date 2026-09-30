@@ -167,6 +167,7 @@ const msg = await globalThis.game.lumennNotify.send({ profile: "quest", destinat
 if (msg && msg.content.includes("NOVA MISSÃO")) ok("send cria mensagem pública com cartão");
 else bad("send cria mensagem pública com cartão", JSON.stringify(msg));
 
+await globalThis.game.settings.set("lumenn-notify", "theme", "orv");
 const edited = await globalThis.game.lumennNotify.send({
   profile: "quest",
   title: "PRÉVIA CONFIRMADA",

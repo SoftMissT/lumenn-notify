@@ -3,6 +3,10 @@ const NS = "lumenn-notify";
 const { ApplicationV2, DialogV2 } = foundry.applications.api;
 
 const esc = (value) => foundry.utils.escapeHTML(String(value ?? ""));
+const themeLabels = { system: "System", orv: "ORV", fantasy: "Fantasy" };
+const configuredTheme = () => {
+  try { return game.settings.get("lumenn-notify", "theme") ?? "system"; } catch { return "system"; }
+};
 
 function selectOptions(values, selected, labelFn) {
   return values
@@ -109,20 +113,6 @@ class LumennNotifyManager extends ApplicationV2 {
         this.render(true);
       });
     });
-    this.element.querySelectorAll("[data-theme-option]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const select = this.element.querySelector('[data-lm-field="theme"]');
-        if (!select) return;
-        select.value = btn.dataset.themeOption;
-        this.element.querySelector(".lm-manager")?.setAttribute("data-lm-manager-theme", btn.dataset.themeOption);
-        this.element.querySelectorAll("[data-theme-option]").forEach((option) => {
-          const active = option === btn;
-          option.classList.toggle("active", active);
-          option.setAttribute("aria-checked", String(active));
-        });
-        select.dispatchEvent(new Event("change", { bubbles: true }));
-      });
-    });
     this.element.querySelectorAll("[data-lm-field]").forEach((el) => {
       el.addEventListener("input", () => this.#refreshPreview());
       el.addEventListener("change", () => {
@@ -148,7 +138,7 @@ class LumennNotifyManager extends ApplicationV2 {
       ...p,
       name: value("name") || p.name,
       type: value("type") || p.type,
-      theme: value("theme") || p.theme,
+      theme: configuredTheme(),
       icon: value("icon") || p.icon,
       title: value("title") || p.title,
       body: value("body") || p.body,
@@ -200,7 +190,6 @@ class LumennNotifyManager extends ApplicationV2 {
       selected,
       groups: Object.values(this.api.getGroups()).sort((a, b) => String(a.name).localeCompare(String(b.name))),
       users: Array.from(game.users ?? []),
-      themes: ["system", "orv", "fantasy"],
       types: ["system", "quest", "alert", "danger", "skill", "levelup", "constellation", "custom"],
       narratives: ["", "observa", "mensagem_indireta", "bencao", "interesse", "rejeita"],
       modes: ["overlay", "chat", "both"],
@@ -209,7 +198,7 @@ class LumennNotifyManager extends ApplicationV2 {
   }
 
   #buildProfilesHTML() {
-    const { profiles, selected, groups, users, themes, types, narratives, modes, recipients } = this.#profileContext();
+    const { profiles, selected, groups, users, types, narratives, modes, recipients } = this.#profileContext();
     const list = profiles
       .map(
         (p) => `
@@ -219,18 +208,17 @@ class LumennNotifyManager extends ApplicationV2 {
             <i class="${esc(p.icon)}"></i>
             <span class="lm-profile-name">${esc(p.name)}</span>
             ${p.builtin ? '<span class="lm-badge lm-badge-native">Nativo</span>' : ""}
-            <span class="lm-badge lm-theme-${esc(p.theme)}">${esc(p.theme)}</span>
+            <span class="lm-badge lm-badge-theme">${esc(themeLabels[configuredTheme()])}</span>
           </button>
         </li>`,
       )
       .join("");
 
     const s = selected ?? {};
-    const themeLabels = { system: "Sistema", orv: "Constelação", fantasy: "Grimório" };
     const userSel = recipients.includes(this.state.recipient ?? "all") ? (this.state.recipient ?? "all") : "all";
 
     return `
-    <div class="lm-manager" data-lm-manager-theme="${esc(s.theme ?? "system")}">
+    <div class="lm-manager" data-lm-manager-theme="${esc(configuredTheme())}">
       <div class="lm-sidebar">
         <div class="lm-sidebar-heading"><span>Perfis da campanha</span><b>${profiles.length}</b></div>
         <div class="lm-search-wrap">
@@ -246,9 +234,9 @@ class LumennNotifyManager extends ApplicationV2 {
       <div class="lm-main">
         <div class="lm-command-header">
           <div>
-            <span class="lm-kicker">SISTEMA DE MENSAGENS // GM</span>
-            <h1>Console do Monarca</h1>
-            <span class="lm-profile-context">Perfil ativo: ${esc(s.name ?? "Nenhum perfil")}</span>
+            <span class="lm-kicker">LUMENN NOTIFY // GM</span>
+            <h1>Lumenn Notify</h1>
+            <span class="lm-profile-context">Perfil ativo: ${esc(s.name ?? "Nenhum perfil")} · Tema global: ${esc(themeLabels[configuredTheme()])}</span>
           </div>
           <span class="lm-online"><i class="fa-solid fa-circle"></i> canal seguro</span>
         </div>
@@ -264,22 +252,10 @@ class LumennNotifyManager extends ApplicationV2 {
         </div>
         <div class="lm-body">
           <div class="lm-editor">
-            <div class="lm-theme-picker">
-              <div class="lm-field-heading">
-                <span>Tema da mensagem</span>
-                <small>Escolha a identidade visual do cartão</small>
-              </div>
-              <div class="lm-theme-options" role="radiogroup" aria-label="Tema da mensagem">
-                ${themes.map((theme) => `<button type="button" class="lm-theme-option lm-theme-option-${esc(theme)}${s.theme === theme ? " active" : ""}" data-theme-option="${esc(theme)}" role="radio" aria-checked="${s.theme === theme}"><span class="lm-theme-swatch"></span><span>${esc(themeLabels[theme] ?? theme)}</span><small>${esc(theme)}</small></button>`).join("")}
-              </div>
-            </div>
             <div class="lm-grid">
               <label>Nome<input type="text" data-lm-field="name" value="${esc(s.name ?? "")}"></label>
               <label>Tipo
                 <select data-lm-field="type">${selectOptions(types, s.type)}</select>
-              </label>
-              <label>Tema
-                <select data-lm-field="theme">${selectOptions(themes, s.theme)}</select>
               </label>
               ${s.type === "constellation" ? `<label>Tipo narrativo
                 <select data-lm-field="narrative">${selectOptions(narratives, s.narrative)}</select>
@@ -320,7 +296,10 @@ class LumennNotifyManager extends ApplicationV2 {
   }
 
   #groupContext() {
-    const groups = Object.values(this.api.getGroups()).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    const query = this.state.query.toLowerCase();
+    const groups = Object.values(this.api.getGroups())
+      .filter((g) => !query || String(g.name).toLowerCase().includes(query))
+      .sort((a, b) => String(a.name).localeCompare(String(b.name)));
     const selected = groups.find((g) => g.id === this.state.selectedGroupId) ?? groups[0] ?? null;
     if (selected && selected.id !== this.state.selectedGroupId) this.state.selectedGroupId = selected.id;
     return { groups, selectedGroup: selected, users: Array.from(game.users ?? []) };
@@ -356,6 +335,13 @@ class LumennNotifyManager extends ApplicationV2 {
         <ul class="lm-list">${rows || '<li class="lm-empty">Nenhum grupo ainda.</li>'}</ul>
       </div>
       <div class="lm-main">
+        <div class="lm-command-header">
+          <div>
+            <span class="lm-kicker">LUMENN NOTIFY // DESTINATÁRIOS</span>
+            <h1>Grupos de jogadores</h1>
+            <span class="lm-profile-context">Envie mensagens para uma seleção salva de usuários.</span>
+          </div>
+        </div>
         <div class="lm-toolbar">
           <button type="button" data-action="newGroup"><i class="fa-solid fa-plus"></i> Novo grupo</button>
           <button type="button" data-action="saveGroup"><i class="fa-solid fa-floppy-disk"></i> Salvar grupo</button>
@@ -408,7 +394,7 @@ class LumennNotifyManager extends ApplicationV2 {
 
   static async #newProfile(event, target) {
     const id = `profile-${foundry.utils.randomID(8)}`;
-    await this.api.saveProfile({ id, name: "Novo perfil", type: "custom", theme: "system", body: "", builtin: false });
+    await this.api.saveProfile({ id, name: "Novo perfil", type: "custom", theme: configuredTheme(), body: "", builtin: false });
     this.state.selectedId = id;
     this.state.error = "";
     this.render(true);

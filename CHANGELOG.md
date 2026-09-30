@@ -15,6 +15,12 @@ e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 - Corrige o botão **Usar** para enviar o rascunho atual da prévia, incluindo texto, tema e stats editados.
 - Mantém a seleção de destinatário e jogador/grupo no mesmo envio.
 
+## [0.2.7] - 2026-09-30
+
+- Move o controle de tema para Configurações → Configurar módulos → Lumenn Notify.
+- Renomeia a interface para Lumenn Notify e remove a marcação “Console do Monarca”.
+- Corrige a busca da aba Grupos e adiciona contexto visual para destinatários salvos.
+
 ## [0.2.4] - 2026-09-29
 
 - Adiciona fundo atmosférico holográfico ao gerenciador.

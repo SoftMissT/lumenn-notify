@@ -20,9 +20,9 @@ usar um dos três temas CSS intercambiáveis.
 - **Presets nativos protegidos**: `system`, `quest`, `alert`, `danger`, `skill`,
   `levelup`, `constellation` somente leitura; duplique para editar.
 - **Destinatários**: todos, só GM, um jogador ou um grupo salvo.
-- **Temas**: `system`, `orv`, `fantasy` troca sem alterar os dados do perfil.
+- **Temas**: `system`, `orv`, `fantasy`, configurados em **Configurações → Configurar módulos → Lumenn Notify**.
 - **Envio**: overlay + cartão no chat, com snapshot do perfil gravado na mensagem.
-- **Prévia confiável**: o botão **Usar** envia exatamente o rascunho mostrado na prévia, incluindo texto, stats, tema e destinatário.
+- **Prévia confiável**: o botão **Usar** envia exatamente o rascunho mostrado na prévia, incluindo texto, stats e destinatário; o tema vem da configuração global.
 - **Compatibilidade**: `window.SLS.send(...)` e `window.SLS.abrir()` continuam
   funcionando.
 
@@ -46,7 +46,7 @@ https://github.com/SoftMissT/lumenn-notify/releases/latest/download/module.json
 2. Abra o console (somente GM):
    - Macro `sls-open-manager`, ou
    - `game.lumennNotify.openManager()` no console.
-3. Escolha um perfil, ajuste texto/tema/destinatário, confira a prévia e clique
+3. Escolha um perfil, ajuste texto/destinatário, confira a prévia e clique
    em **Enviar agora**.
 
 ### API
@@ -77,8 +77,8 @@ window.SLS.send("perigo", "Presença hostil detectada.");
 | `orv`     | Constelações em violeta e dourado |
 | `fantasy` | Grimório em dourado e marrom |
 
-O tema é uma propriedade de cada perfil. Trocar o tema no editor não altera o
-texto, o destino nem os demais dados.
+O tema ativo é uma configuração do mundo. Isso mantém a identidade visual
+consistente para GM e jogadores no chat, overlay e prévia.
 
 ## Desenvolvimento
 
