@@ -5,6 +5,15 @@ Todas as mudanças relevantes do módulo **Lumenn Notify** são registradas aqui
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.3.2] - 2026-10-01
+
+- Reforça a identidade visual dos quatro temas no gerenciador e nos cartões,
+  incluindo molduras, materiais, ornamentos e semântica de alerta próprios.
+- Torna a janela responsiva, melhora a legibilidade dos campos e mantém a
+  prévia utilizável em larguras menores.
+- Bloqueia o salvamento ambíguo de presets nativos e orienta a duplicação para
+  edição; documenta a seleção múltipla de jogadores nos grupos.
+
 ## [0.3.1] - 2026-10-01
 
 - Consolida os temas em `system`, `fantasy`, `cyberpunk` e `horror`, com tokens

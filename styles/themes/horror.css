@@ -32,7 +32,14 @@
     radial-gradient(ellipse at 62% 18%, rgba(140, 146, 117, 0.12), transparent 34%),
     repeating-linear-gradient(0deg, rgba(217, 210, 190, 0.025) 0 1px, transparent 1px 4px),
     linear-gradient(165deg, #34372F, #16181A 60%, #0B0C0D);
-  border: 1px solid #6F7266;
+  border: 3px solid #4a4c46;
+  box-shadow: inset 0 0 0 1px rgba(217, 210, 190, 0.2), inset 0 0 34px rgba(0, 0, 0, 0.62), 0 18px 46px rgba(0, 0, 0, 0.66);
+}
+[data-theme="horror"] .ln-frame::before {
+  inset: 9px;
+  border: 1px solid rgba(217, 210, 190, 0.24);
+  clip-path: none;
+  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.52);
 }
 [data-theme="horror"] .ln-frame::after {
   content: "";
@@ -54,6 +61,13 @@
   font-family: var(--lm-font-display);
   letter-spacing: 0.09em;
   text-shadow: 0 0 12px rgba(90, 20, 18, 0.5);
+}
+[data-theme="horror"] .ln-message header {
+  border-bottom-style: dashed;
+}
+[data-theme="horror"] .ln-message p {
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 [data-theme="horror"] .ln-message[data-severity="error"] .ln-stat { border-left-color: var(--lm-error); }
 @keyframes lm-horror-pulse {

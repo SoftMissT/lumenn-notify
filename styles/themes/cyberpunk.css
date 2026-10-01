@@ -44,6 +44,12 @@
   font: 9px var(--lm-font-mono);
   letter-spacing: 0.18em;
 }
+[data-theme="cyberpunk"] .ln-frame::before {
+  inset: 6px;
+  border-color: rgba(243, 230, 0, 0.72);
+  background: repeating-linear-gradient(135deg, #F3E600 0 8px, #000 8px 16px) bottom / 100% 7px no-repeat;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.86);
+}
 [data-theme="cyberpunk"] .ln-message > .ln-frame {
   background: linear-gradient(160deg, rgba(21, 25, 27, 0.98), rgba(0, 0, 0, 0.99));
 }
@@ -54,6 +60,7 @@
   clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
 }
 [data-theme="cyberpunk"] .ln-message header { border-bottom-color: rgba(243, 230, 0, 0.66); }
+[data-theme="cyberpunk"] .ln-message header h2 { font-style: italic; transform: skewX(-5deg); }
 [data-theme="cyberpunk"] .ln-message[data-severity="warning"] .ln-tag::before { content: "▲ "; }
 @keyframes lm-cyber-glitch {
   0%, 94%, 100% { transform: translate3d(0, 0, 0); }

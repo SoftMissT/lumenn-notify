@@ -248,6 +248,7 @@ class LumennNotifyManager extends ApplicationV2 {
       .join("");
 
     const s = selected ?? {};
+    const isBuiltin = Boolean(s.builtin || this.api.BUILTINS[s.id]);
     const userSel = recipients.includes(this.state.recipient ?? "all") ? (this.state.recipient ?? "all") : "all";
 
     return `
@@ -275,14 +276,15 @@ class LumennNotifyManager extends ApplicationV2 {
         </div>
         <div class="lm-toolbar">
           <button type="button" data-action="newProfile"><i class="fa-solid fa-plus"></i> Novo</button>
-          <button type="button" data-action="duplicateProfile"><i class="fa-solid fa-copy"></i> Duplicar</button>
-          <button type="button" data-action="saveProfile"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
-          <button type="button" data-action="deleteProfile" ${s.builtin ? "disabled" : ""}><i class="fa-solid fa-trash"></i> Excluir</button>
+          <button type="button" data-action="duplicateProfile"><i class="fa-solid fa-copy"></i> ${isBuiltin ? "Duplicar para editar" : "Duplicar"}</button>
+          <button type="button" data-action="saveProfile" ${isBuiltin ? 'disabled title="Preset nativo: duplique para editar"' : ""}><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+          <button type="button" data-action="deleteProfile" ${isBuiltin ? "disabled" : ""}><i class="fa-solid fa-trash"></i> Excluir</button>
           <span class="lm-spacer"></span>
           <button type="button" data-action="importProfiles"><i class="fa-solid fa-file-import"></i> Importar</button>
           <button type="button" data-action="exportProfiles"><i class="fa-solid fa-file-export"></i> Exportar</button>
           <button type="button" data-action="useProfile" class="lm-primary"><i class="fa-solid fa-paper-plane"></i> Usar</button>
         </div>
+        ${isBuiltin ? '<div class="lm-edit-note"><i class="fa-solid fa-lock"></i><span>Preset nativo protegido. Use <b>Duplicar para editar</b> e salvar sua própria versão.</span></div>' : ""}
         <div class="lm-body">
           <div class="lm-editor">
             <div class="lm-grid">
@@ -385,6 +387,7 @@ class LumennNotifyManager extends ApplicationV2 {
             <label class="lm-full">Nome do grupo<input type="text" data-lm-field="groupName" value="${esc(g.name ?? "")}" placeholder="Ex.: Mesa 1"></label>
             <label class="lm-full">Usuários
               <select data-lm-field="groupUsers" multiple size="6">${userOptions(users, g.userIds ?? [])}</select>
+              <small class="lm-field-help">Use Ctrl ou Cmd + clique para selecionar mais de um jogador.</small>
             </label>
             ${this.state.error ? `<div class="lm-error">${esc(this.state.error)}</div>` : ""}
           </div>
