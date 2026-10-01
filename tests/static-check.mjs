@@ -44,6 +44,9 @@ else {
       if (read(f)) ok(`style ${f}`);
       else bad(`style ${f} existe`, "arquivo ausente");
     }
+    const themeStyles = (manifest.styles ?? []).filter((f) => f.startsWith("styles/themes/"));
+    if (themeStyles.length === 4 && !themeStyles.some((f) => /manhwa|orv/.test(f))) ok("manifesto contém exatamente quatro temas");
+    else bad("manifesto contém exatamente quatro temas", JSON.stringify(themeStyles));
   }
 }
 
@@ -74,17 +77,23 @@ for (const imp of managerImport) {
 }
 
 console.log("\n[temas isolados]");
-const themes = ["system", "manhwa", "fantasy", "cyberpunk", "horror"];
+const themes = ["system", "fantasy", "cyberpunk", "horror"];
 for (const theme of themes) {
   const css = read(`styles/themes/${theme}.css`) ?? "";
   if (!css) {
     bad(`styles/themes/${theme}.css existe`, "arquivo ausente");
     continue;
   }
-  if (css.includes(`[data-lm-theme="${theme}"]`)) ok(`tema ${theme} escopado`);
-  else bad(`tema ${theme} escopado`, "sem seletor [data-lm-theme]");
+  if (css.includes(`[data-theme="${theme}"]`)) ok(`tema ${theme} escopado`);
+  else bad(`tema ${theme} escopado`, "sem seletor [data-theme]");
+  const firstScoped = css.indexOf(`[data-theme="${theme}"]`);
+  const unscopedTokens = firstScoped < 0 ? css : css.slice(0, firstScoped);
+  if (!unscopedTokens.match(/--lm-[\w-]+\s*:/)) ok(`tokens ${theme} vivem no escopo`);
+  else bad(`tokens ${theme} vivem no escopo`, "token declarado antes do seletor data-theme");
+  if (css.includes("--lm-font-display:") && css.includes("--lm-font-ui:")) ok(`tipografia ${theme} definida`);
+  else bad(`tipografia ${theme} definida`, "tokens --lm-font-display/--lm-font-ui ausentes");
   const others = themes.filter((t) => t !== theme);
-  const leaked = others.filter((t) => css.includes(`[data-lm-theme="${t}"]`));
+  const leaked = others.filter((t) => css.includes(`[data-theme="${t}"]`));
   if (!leaked.length) ok(`tema ${theme} não vaza para outros`);
   else bad(`tema ${theme} não vaza`, `seletores de ${leaked.join(", ")}`);
 }
@@ -95,15 +104,24 @@ for (const cls of [".ln-message", ".ln-frame", ".lm-manager"]) {
   if (coreCss.includes(cls)) ok(`core define ${cls}`);
   else bad(`core define ${cls}`, "seletor ausente");
 }
-if (coreCss.includes('.lumenn-notify-manager[data-lm-manager-theme="cyberpunk"]')) ok("temas alcançam a janela inteira");
+if (coreCss.includes('.lumenn-notify-manager[data-theme="cyberpunk"]')) ok("temas alcançam a janela inteira");
 else bad("temas alcançam a janela inteira", "root da ApplicationV2 sem tokens temáticos");
+if (coreCss.includes('.lumenn-notify-manager[data-light="true"] .ln-frame')) ok("lightMode cobre a prévia");
+else bad("lightMode cobre a prévia", "o frame interno do manager mantém textura/filtro");
+if (!coreCss.includes(":root")) ok("tokens não vazam para :root");
+else bad("tokens não vazam para :root", "há tokens globais fora do data-theme");
+if (main.includes('data-theme=') && main.includes('data-severity=')) ok("eixos theme/type-severity independentes");
+else bad("eixos theme/type-severity independentes", "atributos data-theme/data-severity ausentes");
+const choicesBlock = main.slice(main.indexOf("const THEME_CHOICES"), main.indexOf("const BUILTINS"));
+if (!choicesBlock.match(/manhwa|orv/)) ok("choices não expõem temas legados");
+else bad("choices não expõem temas legados", "manhwa/orv ainda aparece como escolha canônica");
 
 console.log("\n[api mínima]");
 for (const m of ["openManager", "send", "getProfiles", "saveProfile", "deleteProfile", "getGroups", "saveGroups"]) {
   if (main.includes(m)) ok(`lumenn-notify.js expõe ${m}`);
   else bad(`lumenn-notify.js expõe ${m}`, "símbolo ausente");
 }
-for (const key of ["defaultDuration", "defaultMode", "defaultSound", "maxOverlays"]) {
+for (const key of ["defaultDuration", "defaultMode", "defaultSound", "maxOverlays", "lightMode"]) {
   if (main.includes(`"${key}"`)) ok(`setting GM ${key} declarado`);
   else bad(`setting GM ${key} declarado`, "chave ausente");
 }

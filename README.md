@@ -21,8 +21,8 @@ gerenciador, preview, chat e overlay.
 - **Presets nativos protegidos**: `system`, `quest`, `alert`, `danger`, `skill`,
   `levelup`, `constellation` somente leitura; duplique para editar.
 - **Destinatários**: todos, só GM, um jogador ou um grupo salvo.
-- **Temas**: `system`, `manhwa`, `fantasy`, `cyberpunk` e `horror`, configurados em **Configurações de Jogo → Lumenn Notify**.
-- **Configurações do GM**: duração, modo e som padrão de perfis novos, além do limite de overlays simultâneos.
+- **Temas**: `system`, `fantasy`, `cyberpunk` e `horror`, configurados em **Configurações de Jogo → Lumenn Notify**.
+- **Configurações do GM**: duração, modo, som, modo leve e limite de até dez overlays simultâneos.
 - **Envio**: overlay + cartão no chat, com snapshot do perfil gravado na mensagem.
 - **Prévia confiável**: o botão **Usar** envia exatamente o rascunho mostrado na prévia, incluindo texto, stats e destinatário; o tema vem da configuração global.
 - **Compatibilidade**: `window.SLS.send(...)` e `window.SLS.abrir()` continuam
@@ -79,20 +79,21 @@ window.SLS.send("perigo", "Presença hostil detectada.");
 
 | Tema      | Direção |
 | :-------- | :------ |
-| `system`    | Sala de controle azul-marinho e cyan, com moldura técnica |
-| `manhwa`    | Sistema dark de manhwa, obsidiana, violeta e halo elétrico |
-| `fantasy`   | Fantasia épica, pergaminho, azul-noite e bronze heráldico |
-| `cyberpunk` | Terminal grafite, grid, ciano e magenta neon |
-| `horror`    | Arquivo em decomposição, carvão, verde mofo e ferrugem |
+| `system`    | Janela de sistema azul-marinho, aço e azul neon |
+| `fantasy`   | Manuscrito de pergaminho, mapa a tinta e selo de cera |
+| `cyberpunk` | HUD OLED angular, amarelo ácido, ciano e hazard stripe |
+| `horror`    | Interface analógica de sobrevivência, carvão, osso e musgo |
 
 O tema ativo é uma configuração do mundo. Mensagens novas usam o tema atual;
 mensagens já enviadas preservam o tema salvo no snapshot, mesmo depois de uma
-troca de configuração. Perfis legados com `orv` são lidos como `manhwa`.
+troca de configuração. Valores legados `manhwa`, `orv` e `manhwa-dark` migram
+para `system` sem criar um quinto tema.
 
 ## Desenvolvimento
 
 ```powershell
-node tests/static-check.mjs    # valida manifesto, sintaxe, temas e API
+node tests/static-check.mjs    # valida manifesto, escopo de tokens, temas e API
+node tests/contrast-check.mjs  # contraste AA no pior caso de fundo claro
 node tests/runtime-harness.mjs # boot simulado (settings, hooks, chat, overlay)
 ```
 
@@ -104,7 +105,7 @@ Gate final: teste manual no Foundry v14 com GM + jogador (CT-001..CT-020).
 scripts/lumenn-notify.js          dados, presets, migração, envio, render, hook
 scripts/lumenn-notify-manager.js  gerenciador (ApplicationV2)
 styles/lumenn-notify.css          estrutura e variáveis
-styles/themes/{system,manhwa,fantasy,cyberpunk,horror}.css
+styles/themes/{system,fantasy,cyberpunk,horror}.css
 macros/sls-open-manager.js        wrapper de abertura
 tests/                            checks estáticos + harness
 ```

@@ -1,29 +1,62 @@
-/* Lumenn Notify · Cyberpunk — terminal neon */
-[data-lm-theme="cyberpunk"] .ln-frame {
-  --lm-bg: #05070b;
-  --lm-surface: #0b1018;
-  --lm-surface-raised: #121a25;
-  --lm-fg: #ecffff;
-  --lm-dim: #9cb5ba;
-  --lm-accent: #38f4e8;
-  --lm-accent-2: #ff3dae;
-  --lm-border: #38f4e8;
-  --lm-emitter: #a7fff7;
-  --lm-stat-bg: rgba(56, 244, 232, 0.13);
-  --lm-glow: rgba(255, 61, 174, 0.3);
+/* CYBERPUNK — yellow navigation HUD with angular hazard language. */
+[data-theme="cyberpunk"] .ln-frame {
+  --lm-bg: #000000;
+  --lm-surface: #0A0C0E;
+  --lm-surface-raised: #15191B;
+  --lm-fg: #F7F5D6;
+  --lm-dim: #B8B88D;
+  --lm-accent: #F3E600;
+  --lm-border: #F3E600;
+  --lm-emitter: #C9F7ED;
+  --lm-info: #55EAD4;
+  --lm-info-text: #D8FFF7;
+  --lm-info-soft: rgba(85, 234, 212, 0.13);
+  --lm-success: #55EAD4;
+  --lm-success-text: #D8FFF7;
+  --lm-success-soft: rgba(85, 234, 212, 0.13);
+  --lm-warning: #F3E600;
+  --lm-warning-text: #FFF9A8;
+  --lm-warning-soft: rgba(243, 230, 0, 0.18);
+  --lm-error: #C5003C;
+  --lm-error-text: #FFB7C9;
+  --lm-error-soft: rgba(197, 0, 60, 0.18);
+  --lm-stat-bg: rgba(243, 230, 0, 0.12);
+  --lm-font-display: "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+  --lm-font-ui: "Arial Narrow", "Roboto Condensed", Arial, sans-serif;
+  --lm-font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  --lm-glow: rgba(243, 230, 0, 0.22);
   --lm-radius: 0;
-  --lm-cut: polygon(0 10px, 10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px));
-  --lm-font-display: "JetBrains Mono", "Cascadia Mono", monospace;
-  --lm-font-ui: "JetBrains Mono", "Cascadia Mono", monospace;
-  --lm-animation: lm-cyber-scan 2.8s steps(2, end) infinite;
+  --lm-cut: polygon(0 12px, 12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px));
+  --lm-animation: lm-cyber-glitch 3.2s steps(2, end) infinite;
   background:
-    linear-gradient(rgba(56, 244, 232, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 61, 174, 0.08) 1px, transparent 1px),
-    linear-gradient(135deg, #15202a, #07090f 70%);
+    linear-gradient(rgba(243, 230, 0, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(85, 234, 212, 0.05) 1px, transparent 1px),
+    linear-gradient(135deg, #15191B, #000000 70%);
   background-size: 22px 22px, 22px 22px, auto;
+  border: 1px solid var(--lm-border);
 }
-[data-lm-theme="cyberpunk"] .ln-frame::after { content: "// SIGNAL"; position: absolute; right: 18px; bottom: 10px; color: rgba(56, 244, 232, 0.35); font: 9px var(--lm-font-mono); letter-spacing: 0.18em; }
-[data-lm-theme="cyberpunk"] .ln-message > .ln-frame { background: linear-gradient(160deg, rgba(15, 30, 38, 0.98), rgba(5, 8, 14, 0.99)); }
-[data-lm-theme="cyberpunk"] .ln-tag { color: #ff3dae; background: #080a10; border-color: #ff3dae; }
-[data-lm-theme="cyberpunk"] .ln-message header { border-bottom-color: rgba(255, 61, 174, 0.6); }
-@keyframes lm-cyber-scan { 0%, 100% { filter: drop-shadow(0 0 12px rgba(56, 244, 232, 0.2)); } 50% { filter: drop-shadow(0 0 24px rgba(255, 61, 174, 0.38)); } }
+[data-theme="cyberpunk"] .ln-frame::after {
+  content: "// SIGNAL";
+  position: absolute;
+  right: 16px;
+  bottom: 10px;
+  color: rgba(243, 230, 0, 0.7);
+  font: 9px var(--lm-font-mono);
+  letter-spacing: 0.18em;
+}
+[data-theme="cyberpunk"] .ln-message > .ln-frame {
+  background: linear-gradient(160deg, rgba(21, 25, 27, 0.98), rgba(0, 0, 0, 0.99));
+}
+[data-theme="cyberpunk"] .ln-message .ln-tag {
+  color: var(--lm-accent);
+  background: var(--lm-bg);
+  border-color: var(--lm-accent);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+}
+[data-theme="cyberpunk"] .ln-message header { border-bottom-color: rgba(243, 230, 0, 0.66); }
+[data-theme="cyberpunk"] .ln-message[data-severity="warning"] .ln-tag::before { content: "▲ "; }
+@keyframes lm-cyber-glitch {
+  0%, 94%, 100% { transform: translate3d(0, 0, 0); }
+  95% { transform: translate3d(1px, -1px, 0); }
+  96% { transform: translate3d(-1px, 1px, 0); }
+}

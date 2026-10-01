@@ -137,6 +137,8 @@ if (hooks.list.init) {
   ok("hook init disparado");
 } else bad("hook init registrado", "não registrado");
 
+await globalThis.game.settings.set("lumenn-notify", "theme", "manhwa");
+
 if (hooks.list.ready) {
   await hooks.list.ready();
   ok("hook ready disparado");
@@ -144,9 +146,11 @@ if (hooks.list.ready) {
 
 if (globalThis.game.lumennNotify?.openManager) ok("game.lumennNotify exposto");
 else bad("game.lumennNotify exposto", "api ausente após ready");
+if (globalThis.game.settings.get("lumenn-notify", "theme") === "system") ok("setting legada migra para SYSTEM");
+else bad("setting legada migra para SYSTEM", globalThis.game.settings.get("lumenn-notify", "theme"));
 
 console.log("\n[configurações GM]");
-for (const key of ["theme", "defaultDuration", "defaultMode", "defaultSound", "maxOverlays"]) {
+for (const key of ["theme", "defaultDuration", "defaultMode", "defaultSound", "maxOverlays", "lightMode"]) {
   const config = settingConfigs.get(`lumenn-notify.${key}`);
   if (config?.config === true) ok(`setting GM ${key}`);
   else bad(`setting GM ${key}`, "configuração não registrada");
@@ -168,7 +172,7 @@ const saved = await globalThis.game.lumennNotify.saveProfile({
   id: "custom-1",
   name: "Mesa Secreta",
   type: "custom",
-  theme: "orv",
+  theme: "manhwa",
   body: "A constelação observa.",
 });
 if (saved && saved.id === "custom-1") ok("saveProfile persiste");
@@ -191,15 +195,15 @@ const msg = await globalThis.game.lumennNotify.send({ profile: "quest", destinat
 if (msg && msg.content.includes("NOVA MISSÃO")) ok("send cria mensagem pública com cartão");
 else bad("send cria mensagem pública com cartão", JSON.stringify(msg));
 
-await globalThis.game.settings.set("lumenn-notify", "theme", "orv");
+await globalThis.game.settings.set("lumenn-notify", "theme", "manhwa");
 const edited = await globalThis.game.lumennNotify.send({
   profile: "quest",
   title: "PRÉVIA CONFIRMADA",
   body: "Texto editado no gerenciador.",
-  theme: "orv",
+  theme: "manhwa",
   destination: "all",
 });
-if (edited?.content.includes("Texto editado no gerenciador.") && edited?.content.includes('data-lm-theme="manhwa"'))
+if (edited?.content.includes("Texto editado no gerenciador.") && edited?.content.includes('data-theme="system"') && edited?.content.includes('data-lm-type="quest"'))
   ok("send preserva rascunho editado e tema");
 else bad("send preserva rascunho editado e tema", JSON.stringify(edited));
 
@@ -225,14 +229,14 @@ else bad("grupo poda IDs inexistentes", JSON.stringify(pruned));
 
 console.log("\n[render]");
 const html = globalThis.game.lumennNotify.renderMessage(globalThis.game.lumennNotify.getProfile("constellation"));
-if (html.includes('data-lm-theme="manhwa"')) ok("renderMessage aplica tema");
-else bad("renderMessage aplica tema", "data-lm-theme ausente");
+if (html.includes('data-theme="system"') && html.includes('data-severity="info"')) ok("renderMessage separa tema e severidade");
+else bad("renderMessage separa tema e severidade", "data-theme/data-severity ausentes");
 await globalThis.game.settings.set("lumenn-notify", "theme", "horror");
 const historic = globalThis.game.lumennNotify.renderMessage({ theme: "manhwa", title: "Histórico" });
-if (historic.includes('data-lm-theme="manhwa"')) ok("snapshot preserva tema antigo");
-else bad("snapshot preserva tema antigo", historic);
+if (historic.includes('data-theme="system"')) ok("snapshot legado migra para SYSTEM");
+else bad("snapshot legado migra para SYSTEM", historic);
 const current = await globalThis.game.lumennNotify.send({ profile: "quest", title: "Atual" });
-if (current?.content.includes('data-lm-theme="horror"')) ok("nova mensagem usa tema global atual");
+if (current?.content.includes('data-theme="horror"')) ok("nova mensagem usa tema global atual");
 else bad("nova mensagem usa tema global atual", current?.content ?? "ausente");
 
 console.log("\n[overlay hook]");
@@ -243,7 +247,7 @@ const snapMsg = {
   visible: true,
   author: { id: "p1" },
   whisper: [],
-  getFlag: () => ({ v: 1, profile: { mode: "both", theme: "orv", sound: true, duration: 0, title: "Teste" } }),
+  getFlag: () => ({ v: 1, profile: { mode: "both", theme: "manhwa", sound: true, duration: 0, title: "Teste" } }),
 };
 for (const fn of createHooks) fn(snapMsg);
 if (overlayBodies.length && overlayBodies[0].className === "ln-overlay" && overlayBodies[0].innerHTML.includes("ln-message"))
@@ -254,7 +258,7 @@ console.log("\n[chat render hook]");
 const renderHooks = hooks.list.renderChatMessageHTML ?? [];
 const renderedChat = { classList: { values: [], add(...items) { this.values.push(...items); } }, dataset: {}, getFlag: snapMsg.getFlag };
 for (const fn of renderHooks) fn(snapMsg, renderedChat);
-if (renderedChat.classList.values.includes("lumenn-chat-message") && renderedChat.dataset.lmTheme === "manhwa") ok("chat wrapper recebe tema e classe");
+if (renderedChat.classList.values.includes("lumenn-chat-message") && renderedChat.dataset.theme === "system") ok("chat wrapper recebe tema e classe");
 else bad("chat wrapper recebe tema e classe", JSON.stringify(renderedChat));
 
 console.log("\n[overlay-only]");
@@ -265,10 +269,22 @@ if (renderedChat.classList.values.includes("lumenn-chat-message--overlay-only"))
 else bad("overlay-only oculta cartão no ChatLog", JSON.stringify(renderedChat));
 if (createdMessages.length === beforeOverlayOnly) ok("overlay-only não cria exclusão destrutiva");
 else bad("overlay-only não cria exclusão destrutiva", "harness não deveria criar mensagens");
-for (let i = 0; i < 6; i++) for (const fn of createHooks) fn({ visible: true, author: { id: `p${i}` }, whisper: [], getFlag: () => ({ v: 1, profile: { mode: "both", theme: "horror", sound: false, duration: 0, title: `Burst ${i}` } }) });
+for (let i = 0; i < 12; i++) for (const fn of createHooks) fn({ visible: true, author: { id: `p${i}` }, whisper: [], getFlag: () => ({ v: 1, profile: { mode: "both", theme: "horror", sound: false, duration: 0, title: `Burst ${i}` } }) });
 const liveOverlays = overlayBodies.filter((entry) => !entry.removed);
-if (liveOverlays.length <= 5) ok("overlay limita cinco cartões ativos");
-else bad("overlay limita cinco cartões ativos", `${liveOverlays.length} ativos`);
+if (liveOverlays.length <= 10) ok("overlay respeita orçamento de dez cartões ativos");
+else bad("overlay respeita orçamento de dez cartões ativos", `${liveOverlays.length} ativos`);
+await globalThis.game.settings.set("lumenn-notify", "lightMode", true);
+if (liveOverlays.every((entry) => entry.dataset.lmLight === "true")) ok("lightMode atualiza overlays ativos");
+else bad("lightMode atualiza overlays ativos", JSON.stringify(liveOverlays.map((entry) => entry.dataset.lmLight)));
+
+console.log("\n[matriz tema x severidade]");
+for (const theme of ["system", "fantasy", "cyberpunk", "horror"]) {
+  for (const [type, severity] of [["system", "info"], ["levelup", "success"], ["alert", "warning"], ["danger", "error"]]) {
+    const matrix = globalThis.game.lumennNotify.renderMessage({ theme, type, severity, title: `${theme}-${severity}` });
+    if (matrix.includes(`data-theme="${theme}"`) && matrix.includes(`data-severity="${severity}"`) && matrix.includes(`data-lm-type="${type}"`)) ok(`matriz ${theme}/${severity}`);
+    else bad(`matriz ${theme}/${severity}`, matrix);
+  }
+}
 
 console.log("\n[entrada GM: scene control]");
 const sceneHooks = hooks.list.getSceneControlButtons ?? [];

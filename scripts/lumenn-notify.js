@@ -8,10 +8,10 @@ const DEFAULT_DURATION_KEY = "defaultDuration";
 const DEFAULT_MODE_KEY = "defaultMode";
 const DEFAULT_SOUND_KEY = "defaultSound";
 const MAX_OVERLAYS_KEY = "maxOverlays";
+const LIGHT_MODE_KEY = "lightMode";
 const SCHEMA = 1;
 const THEME_CHOICES = {
   system: "System · Azul técnico",
-  manhwa: "Manhwa dark · ORV",
   fantasy: "Fantasia épica · Grimório",
   cyberpunk: "Cyberpunk · Neon",
   horror: "Terror · Ruína",
@@ -24,7 +24,7 @@ const BUILTINS = {
   danger: { name: "Perigo", type: "danger", theme: "system", icon: "fa-solid fa-skull", title: "AMEAÇA DETECTADA", body: "Presença hostil fixou os olhos em você.", emitter: "Protocolo de Defesa", tag: "PERIGO", footer: "PROTOCOLO DE DEFESA", stats: [], duration: 8000, mode: "both", sound: true },
   skill: { name: "Habilidade", type: "skill", theme: "system", icon: "fa-solid fa-bolt", title: "HABILIDADE ADQUIRIDA", body: "Uma nova habilidade foi registrada.", emitter: "Sistema", tag: "HABILIDADE", footer: "STATUS", stats: [], duration: 8000, mode: "both", sound: true },
   levelup: { name: "Level Up", type: "levelup", theme: "system", icon: "fa-solid fa-angles-up", title: "NÍVEL AUMENTADO", body: "Você ficou mais forte.", emitter: "Sistema", tag: "LEVEL UP", footer: "STATUS", stats: [{ label: "Nível", value: "2" }], duration: 10000, mode: "both", sound: true },
-  constellation: { name: "Constelação", type: "constellation", theme: "orv", icon: "fa-solid fa-star", title: "UMA CONSTELAÇÃO OBSERVA", body: "A constelação aguarda o próximo movimento da encarnação.", emitter: "Constelação sem nome", tag: "MENSAGEM INDIRETA", footer: "CANAL CELESTIAL", stats: [], duration: 9000, mode: "both", sound: true }
+  constellation: { name: "Constelação", type: "constellation", theme: "system", icon: "fa-solid fa-star", title: "UMA CONSTELAÇÃO OBSERVA", body: "A constelação aguarda o próximo movimento da encarnação.", emitter: "Constelação sem nome", tag: "MENSAGEM INDIRETA", footer: "CANAL CELESTIAL", stats: [], duration: 9000, mode: "both", sound: true }
 };
 
 const uid = (prefix = "profile") => `${prefix}-${foundry.utils.randomID(8)}`;
@@ -32,7 +32,13 @@ const isGM = () => Boolean(game.user?.isGM);
 const configuredTheme = () => {
   try { return normalizeTheme(game.settings.get(NS, THEME_KEY)); } catch { return "system"; }
 };
-const normalizeTheme = (theme) => ({ orv: "manhwa", "manhwa-dark": "manhwa" }[String(theme ?? "")] ?? (THEME_CHOICES[theme] ? theme : "system"));
+// `type` describes notification content; `theme` describes visual identity.
+// Legacy Manhwa/ORV values intentionally migrate to the canonical SYSTEM theme.
+const normalizeTheme = (theme) => ({ orv: "system", manhwa: "system", "manhwa-dark": "system" }[String(theme ?? "")] ?? (THEME_CHOICES[theme] ? theme : "system"));
+const normalizeSeverity = (type, explicit) => {
+  if (["info", "success", "warning", "error"].includes(explicit)) return explicit;
+  return ({ levelup: "success", alert: "warning", danger: "error" }[String(type ?? "")] ?? "info");
+};
 const settingValue = (key, fallback) => {
   try { return globalThis.game?.settings?.get(NS, key) ?? fallback; } catch { return fallback; }
 };
@@ -43,7 +49,7 @@ const clampDurationMs = (value, fallback = 7000) => {
 const defaultDurationMs = () => clampDurationMs(Number(settingValue(DEFAULT_DURATION_KEY, 7)) * 1000);
 const defaultMode = () => ["overlay", "chat", "both"].includes(settingValue(DEFAULT_MODE_KEY, "both")) ? settingValue(DEFAULT_MODE_KEY, "both") : "both";
 const defaultSound = () => settingValue(DEFAULT_SOUND_KEY, true) !== false;
-const overlayMax = () => Math.min(10, Math.max(1, Number(settingValue(MAX_OVERLAYS_KEY, 5)) || 5));
+const overlayMax = () => Math.min(10, Math.max(1, Number(settingValue(MAX_OVERLAYS_KEY, 10)) || 10));
 
 const CONTROL_NAME = "lumenn-notify";
 const CONTROL_TOOL = "open-manager";
@@ -86,6 +92,7 @@ function normalizeProfile(raw, id = uid()) {
     name: String(p.name ?? p.rotulo ?? id),
     builtin: Boolean(p.builtin),
     type: p.type ?? p.tipo ?? "custom",
+    severity: normalizeSeverity(p.type ?? p.tipo ?? "custom", p.severity),
     theme: normalizeTheme(p.theme ?? "system"),
     icon: normalizeIcon(p.icon ?? p.icone ?? "fa-solid fa-satellite-dish"),
     title: p.title ?? p.titulo ?? "NOVA MENSAGEM",
@@ -153,9 +160,15 @@ function registerSettings() {
   });
   register(MAX_OVERLAYS_KEY, {
     name: "Limite de overlays simultâneos",
-    hint: "Quantidade máxima de cartões sobrepostos na tela de cada jogador.",
-    scope: "world", config: true, type: Number, default: 5,
+    hint: "Quantidade máxima de cartões sobrepostos na tela de cada jogador (máximo recomendado: 10).",
+    scope: "world", config: true, type: Number, default: 10,
     range: { min: 1, max: 10, step: 1 },
+  });
+  register(LIGHT_MODE_KEY, {
+    name: "Modo leve do Lumenn Notify",
+    hint: "Reduz texturas, ruído e filtros para preservar desempenho em muitos overlays.",
+    scope: "world", config: true, type: Boolean, default: false,
+    onChange: (enabled) => Hooks.callAll("lumennNotifyLightModeChanged", Boolean(enabled)),
   });
 }
 
@@ -196,8 +209,9 @@ async function deleteProfile(id) {
 function renderMessage(profile, data = {}) {
   const p = normalizeProfile({ ...profile, ...data });
   p.theme = normalizeTheme(p.theme);
+  p.severity = normalizeSeverity(p.type, p.severity);
   const stats = (p.stats ?? []).map((s) => `<div class="ln-stat"><span>${foundry.utils.escapeHTML(s.label ?? s.rotulo ?? "")}</span><b>${foundry.utils.escapeHTML(s.value ?? s.valor ?? "")}</b></div>`).join("");
-  return `<div class="ln-message" data-lm-theme="${foundry.utils.escapeHTML(p.theme)}" data-lm-type="${foundry.utils.escapeHTML(p.type)}"><div class="ln-frame"><div class="ln-tag">${foundry.utils.escapeHTML(p.tag)}</div><header><i class="${foundry.utils.escapeHTML(p.icon)}"></i><h2>${foundry.utils.escapeHTML(p.title)}</h2></header><div class="ln-origin"><i class="fa-solid fa-satellite-dish"></i>${foundry.utils.escapeHTML(p.emitter)}</div><p>${foundry.utils.escapeHTML(p.body).replace(/\n/g, "<br>")}</p>${stats ? `<div class="ln-stats">${stats}</div>` : ""}<footer><span>◆</span>${foundry.utils.escapeHTML(p.footer)}</footer></div></div>`;
+  return `<div class="ln-message" data-theme="${foundry.utils.escapeHTML(p.theme)}" data-lm-type="${foundry.utils.escapeHTML(p.type)}" data-severity="${foundry.utils.escapeHTML(p.severity)}"><div class="ln-frame"><div class="ln-tag">${foundry.utils.escapeHTML(p.tag)}</div><header><i class="${foundry.utils.escapeHTML(p.icon)}"></i><h2>${foundry.utils.escapeHTML(p.title)}</h2></header><div class="ln-origin"><i class="fa-solid fa-satellite-dish"></i>${foundry.utils.escapeHTML(p.emitter)}</div><p>${foundry.utils.escapeHTML(p.body).replace(/\n/g, "<br>")}</p>${stats ? `<div class="ln-stats">${stats}</div>` : ""}<footer><span>◆</span>${foundry.utils.escapeHTML(p.footer)}</footer></div></div>`;
 }
 
 async function send(data = {}) {
@@ -237,10 +251,12 @@ const activeOverlays = new Set();
 function showOverlay(snapshot) {
   const p = snapshot?.profile;
   if (!p) return;
+  const startedAt = globalThis.performance?.now?.() ?? 0;
   const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
   const el = document.createElement("div");
   el.className = "ln-overlay";
-  el.dataset.lmTheme = normalizeTheme(p.theme);
+  el.dataset.theme = normalizeTheme(p.theme);
+  el.dataset.lmLight = settingValue(LIGHT_MODE_KEY, false) ? "true" : "false";
   el.innerHTML = renderMessage(p);
   const remove = () => {
     if (!activeOverlays.delete(el)) return;
@@ -249,18 +265,24 @@ function showOverlay(snapshot) {
   el.addEventListener("click", remove);
   document.body.appendChild(el);
   activeOverlays.add(el);
+  const renderCost = (globalThis.performance?.now?.() ?? startedAt) - startedAt;
+  if (renderCost > 16) console.warn(`[${NS}] overlay render exceeded 16ms`, { renderCost, active: activeOverlays.size });
   while (activeOverlays.size > overlayMax()) remove([...activeOverlays][0]);
   if (p.sound) playOverlaySound();
   const duration = Number(p.duration ?? 0);
   if (duration > 0 && !reduced) setTimeout(remove, duration);
 }
 
+Hooks.on("lumennNotifyLightModeChanged", (enabled) => {
+  for (const overlay of activeOverlays) overlay.dataset.lmLight = enabled ? "true" : "false";
+});
+
 Hooks.on("renderChatMessageHTML", (message, html) => {
   const snapshot = message.getFlag?.(NS, "snapshot");
   if (!snapshot || !html?.classList) return;
   const mode = snapshot.profile?.mode ?? "both";
   html.classList.add("lumenn-chat-message");
-  html.dataset.lmTheme = normalizeTheme(snapshot.profile?.theme);
+  html.dataset.theme = normalizeTheme(snapshot.profile?.theme);
   html.dataset.lmMode = mode;
   if (mode === "overlay") html.classList.add("lumenn-chat-message--overlay-only");
 });
@@ -294,6 +316,13 @@ Hooks.once("init", () => {
 Hooks.on("getSceneControlButtons", registerSceneControl);
 
 Hooks.once("ready", async () => {
+  try {
+    const storedTheme = game.settings.get(NS, THEME_KEY);
+    const normalizedTheme = normalizeTheme(storedTheme);
+    if (storedTheme !== normalizedTheme) await game.settings.set(NS, THEME_KEY, normalizedTheme);
+  } catch (error) {
+    console.warn(`[${NS}] theme migration skipped`, error);
+  }
   const current = game.settings.get(NS, KEY) ?? {};
   if (!Object.keys(current).length) {
     const migrated = migrateLegacy();
@@ -301,7 +330,7 @@ Hooks.once("ready", async () => {
   }
   const api = { openManager: () => openManager(api), send, getProfile: findProfile, getProfiles, saveProfile, deleteProfile, getGroups, saveGroups, renderMessage, normalizeProfile, BUILTINS, getTheme: configuredTheme };
   game.lumennNotify = api;
-  window.SLS = { __v: "module-0.3.0", abrir: api.openManager, send: (data, body) => typeof data === "string" ? send({ profile: data, body }) : send(data), perfis: BUILTINS };
+  window.SLS = { __v: "module-0.3.1", abrir: api.openManager, send: (data, body) => typeof data === "string" ? send({ profile: data, body }) : send(data), perfis: BUILTINS };
 });
 
 export { BUILTINS, getProfiles, getGroups, normalizeProfile, renderMessage, send, saveProfile, deleteProfile };

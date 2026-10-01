@@ -1,45 +1,68 @@
-/* Lumenn Notify · Tema FANTASY: "grimório / pergaminho"
-   Escopo: [data-lm-theme="fantasy"] */
-
-[data-lm-theme="fantasy"] .ln-frame {
-  --lm-bg: #0d0a06;
-  --lm-surface: #1a140c;
-  --lm-fg: #f3ead6;
-  --lm-dim: #c9b89a;
-  --lm-accent: #d9a441;
-  --lm-border: #d9a441;
-  --lm-emitter: #e8c98a;
-  --lm-stat-bg: rgba(217, 164, 65, 0.12);
-  --lm-radius: 10px;
-  --lm-shadow: 0 0 30px rgba(217, 164, 65, 0.2), 0 0 8px rgba(217, 164, 65, 0.35), 0 18px 50px rgba(0, 0, 0, 0.7);
-  --lm-font: var(--lm-font-ui);
+/* FANTASY — manuscript, map ink, stitching and wax-seal semantics. */
+[data-theme="fantasy"] .ln-frame {
+  --lm-bg: #2A1A10;
+  --lm-surface: #E8D9B5;
+  --lm-surface-raised: #F1E5C5;
+  --lm-fg: #241A12;
+  --lm-dim: #5A432C;
+  --lm-accent: #B8923A;
+  --lm-border: #8F6A2D;
+  --lm-emitter: #6B4C2C;
+  --lm-info: #6B4C2C;
+  --lm-info-text: #3B281A;
+  --lm-info-soft: rgba(107, 76, 44, 0.14);
+  --lm-success: #7A5B21;
+  --lm-success-text: #3D2912;
+  --lm-success-soft: rgba(184, 146, 58, 0.2);
+  --lm-warning: #956D20;
+  --lm-warning-text: #3C2611;
+  --lm-warning-soft: rgba(149, 109, 32, 0.18);
+  --lm-error: #6B1E1E;
+  --lm-error-text: #4B1515;
+  --lm-error-soft: rgba(107, 30, 30, 0.16);
+  --lm-stat-bg: rgba(184, 146, 58, 0.18);
+  --lm-font-display: "Cinzel", "Palatino Linotype", Georgia, serif;
+  --lm-font-ui: "Cormorant Garamond", "Palatino Linotype", Georgia, serif;
+  --lm-font-mono: "Courier New", ui-monospace, monospace;
+  --lm-radius: 2px;
+  --lm-cut: none;
+  --lm-shadow: 0 12px 42px rgba(42, 26, 16, 0.42);
+  --lm-glow: rgba(184, 146, 58, 0.16);
   background:
-    repeating-linear-gradient(135deg, transparent 0 13px, rgba(247, 232, 200, 0.05) 14px, transparent 15px),
-    radial-gradient(circle at 82% 20%, rgba(255, 232, 167, 0.16), transparent 28%),
-    linear-gradient(180deg, #d9a441 0%, rgba(217, 164, 65, 0.55) 50%, rgba(160, 110, 40, 0.4) 100%);
+    radial-gradient(circle at 18% 12%, rgba(107, 30, 30, 0.12), transparent 18%),
+    repeating-linear-gradient(90deg, rgba(90, 67, 44, 0.05) 0 2px, transparent 2px 9px),
+    linear-gradient(165deg, #F1E5C5, #E8D9B5 72%, #C9AE79);
+  border: 1px solid #8F6A2D;
 }
-[data-lm-theme="fantasy"] .ln-frame::after {
+[data-theme="fantasy"] .ln-frame::before {
+  inset: 8px;
+  border: 0;
+  background: repeating-radial-gradient(circle at 0 12px, #6B4C2C 0 2px, transparent 2.5px 14px);
+  opacity: 0.65;
+}
+[data-theme="fantasy"] .ln-frame::after {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #d9a441 25%, #f7e8c8 50%, #d9a441 75%, transparent);
-  box-shadow: 0 0 14px #d9a441;
-  opacity: 0.85;
+  inset: 12px;
+  border: 1px solid rgba(107, 76, 44, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(184, 146, 58, 0.22);
+  pointer-events: none;
 }
-[data-lm-theme="fantasy"] .ln-message > .ln-frame {
+[data-theme="fantasy"] .ln-message > .ln-frame {
   background:
-    radial-gradient(120% 90% at 50% -18%, rgba(217, 164, 65, 0.2), transparent 62%),
-    radial-gradient(110% 70% at 0% 112%, rgba(160, 110, 40, 0.14), transparent 58%),
-    linear-gradient(168deg, rgba(40, 30, 18, 0.97) 0%, rgba(28, 21, 13, 0.98) 44%, rgba(13, 10, 6, 0.99) 100%);
+    radial-gradient(circle at 84% 18%, rgba(107, 30, 30, 0.14), transparent 16%),
+    linear-gradient(155deg, rgba(241, 229, 197, 0.98), rgba(232, 217, 181, 0.98));
 }
-[data-lm-theme="fantasy"] .ln-tag {
-  color: #eec37c;
-  background: #0d0a06;
-  border-color: rgba(217, 164, 65, 0.45);
+[data-theme="fantasy"] .ln-message .ln-tag {
+  color: var(--lm-error);
+  background: rgba(232, 217, 181, 0.8);
+  border-color: rgba(107, 30, 30, 0.48);
+  font-family: var(--lm-font-mono);
 }
-[data-lm-theme="fantasy"] .ln-message header h2 {
-  letter-spacing: 0.16em;
+[data-theme="fantasy"] .ln-message[data-severity="success"] .ln-tag {
+  border-radius: 50%;
+  padding: 10px 8px;
+  transform: rotate(-8deg);
+  box-shadow: inset 0 0 0 2px rgba(107, 30, 30, 0.28);
 }
+[data-theme="fantasy"] .ln-message header h2 { letter-spacing: 0.08em; }

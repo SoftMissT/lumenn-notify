@@ -1,47 +1,64 @@
-/* Lumenn Notify · Tema SYSTEM: "Star Stream Control Room"
-   Escopo: [data-lm-theme="system"] */
-
-[data-lm-theme="system"] .ln-frame {
-  --lm-bg: #05070a;
-  --lm-surface: #0f1620;
-  --lm-fg: #e6f1ff;
-  --lm-dim: #b8c5d8;
-  --lm-accent: #4abdff;
-  --lm-border: #4abdff;
-  --lm-emitter: #8fd0ff;
-  --lm-stat-bg: rgba(74, 189, 255, 0.12);
+/* SYSTEM — game-system notice, cold blue control-room identity. */
+[data-theme="system"] .ln-frame {
+  --lm-bg: #0A1428;
+  --lm-surface: #122642;
+  --lm-surface-raised: #19385A;
+  --lm-fg: #F2F7FF;
+  --lm-dim: #B7CBE1;
+  --lm-accent: #3DB8FF;
+  --lm-border: #3DB8FF;
+  --lm-emitter: #BFE7FF;
+  --lm-info: #3DB8FF;
+  --lm-info-text: #DDF4FF;
+  --lm-info-soft: rgba(61, 184, 255, 0.14);
+  --lm-success: #6DE3C1;
+  --lm-success-text: #D8FFF2;
+  --lm-success-soft: rgba(109, 227, 193, 0.14);
+  --lm-warning: #F3C969;
+  --lm-warning-text: #FFF0B8;
+  --lm-warning-soft: rgba(243, 201, 105, 0.16);
+  --lm-error: #F2768E;
+  --lm-error-text: #FFD9E1;
+  --lm-error-soft: rgba(242, 118, 142, 0.16);
+  --lm-stat-bg: rgba(61, 184, 255, 0.12);
+  --lm-font-display: "Orbitron", "Rajdhani", "Segoe UI", sans-serif;
+  --lm-font-ui: "Rajdhani", "Segoe UI", sans-serif;
+  --lm-font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
   --lm-radius: 3px;
-  --lm-shadow: 0 0 30px rgba(74, 189, 255, 0.22), 0 0 6px rgba(74, 189, 255, 0.4), 0 20px 55px rgba(0, 0, 0, 0.72);
-  --lm-font: var(--lm-font-ui);
+  --lm-cut: none;
+  --lm-shadow: 0 0 30px rgba(61, 184, 255, 0.2), 0 20px 55px rgba(0, 0, 0, 0.72);
+  --lm-glow: rgba(61, 184, 255, 0.2);
   background:
-    repeating-linear-gradient(0deg, transparent 0 31px, rgba(74, 189, 255, 0.06) 32px),
-    repeating-linear-gradient(90deg, transparent 0 47px, rgba(74, 189, 255, 0.045) 48px),
-    linear-gradient(180deg, #4abdff 0%, rgba(74, 189, 255, 0.55) 55%, rgba(74, 189, 255, 0.4) 100%);
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(61, 184, 255, 0.06) 32px),
+    repeating-linear-gradient(90deg, transparent 0 47px, rgba(61, 184, 255, 0.045) 48px),
+    linear-gradient(180deg, rgba(61, 184, 255, 0.18), rgba(10, 20, 40, 0.98) 65%);
+  border: 1px solid rgba(61, 184, 255, 0.72);
+  backdrop-filter: blur(7px);
 }
-[data-lm-theme="system"] .ln-frame::after {
-  content: "";
+[data-theme="system"] .ln-frame::after {
+  content: "[ STATUS ONLINE ]";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #4abdff 22%, #fff 50%, #4abdff 78%, transparent);
-  box-shadow: 0 0 14px #4abdff;
-  opacity: 0.9;
+  right: 18px;
+  bottom: 10px;
+  color: rgba(191, 231, 255, 0.72);
+  font: 9px var(--lm-font-mono);
+  letter-spacing: 0.16em;
 }
-[data-lm-theme="system"] .ln-frame > .ln-panel,
-[data-lm-theme="system"] .ln-message > .ln-frame {
+[data-theme="system"] .ln-message > .ln-frame {
   background:
-    radial-gradient(120% 90% at 50% -18%, rgba(74, 189, 255, 0.22), transparent 62%),
-    radial-gradient(110% 70% at 0% 112%, rgba(74, 189, 255, 0.15), transparent 58%),
-    linear-gradient(168deg, rgba(26, 36, 50, 0.96) 0%, rgba(17, 25, 37, 0.97) 44%, rgba(9, 13, 22, 0.98) 100%);
+    radial-gradient(100% 80% at 50% -18%, rgba(61, 184, 255, 0.22), transparent 64%),
+    radial-gradient(90% 70% at 100% 100%, rgba(116, 78, 214, 0.12), transparent 60%),
+    linear-gradient(168deg, rgba(18, 38, 66, 0.98), rgba(10, 20, 40, 0.99));
 }
-[data-lm-theme="system"] .ln-tag {
-  color: #4abdff;
-  background: #05070a;
-  border-color: rgba(74, 189, 255, 0.4);
+[data-theme="system"] .ln-message .ln-tag {
+  color: var(--lm-accent);
+  background: var(--lm-bg);
+  border-color: rgba(61, 184, 255, 0.48);
 }
-[data-lm-theme="system"] .ln-message header h2,
-[data-lm-theme="system"] .ln-message .ln-origin {
-  text-shadow: 0 0 12px rgba(74, 189, 255, 0.55);
+[data-theme="system"] .ln-message header h2,
+[data-theme="system"] .ln-message .ln-origin {
+  text-shadow: 0 0 12px rgba(61, 184, 255, 0.48);
 }
+[data-theme="system"] .ln-message[data-severity="success"] .ln-tag::before { content: "+ "; }
+[data-theme="system"] .ln-message[data-severity="warning"] .ln-tag::before { content: "[!] "; }
+[data-theme="system"] .ln-message[data-severity="error"] .ln-tag::before { content: "[X] "; }

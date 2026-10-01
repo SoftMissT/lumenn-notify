@@ -5,6 +5,13 @@ Todas as mudanças relevantes do módulo **Lumenn Notify** são registradas aqui
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.3.1] - 2026-10-01
+
+- Consolida os temas em `system`, `fantasy`, `cyberpunk` e `horror`, com tokens
+  escopados por `data-theme` e severidade visual `info/success/warning/error`.
+- Migra `manhwa`, `orv` e `manhwa-dark` para SYSTEM sem recarregar o mundo.
+- Adiciona modo leve, orçamento de dez overlays e verificações de contraste AA.
+
 ## [0.3.0] - 2026-09-30
 
 - Faz o tema global alcançar toda a janela `ApplicationV2` (chrome do Foundry,

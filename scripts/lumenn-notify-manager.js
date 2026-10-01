@@ -5,8 +5,6 @@ const { ApplicationV2, DialogV2 } = foundry.applications.api;
 const esc = (value) => foundry.utils.escapeHTML(String(value ?? ""));
 const themeLabels = {
   system: "System",
-  manhwa: "Manhwa dark",
-  orv: "Manhwa dark",
   fantasy: "Fantasia épica",
   cyberpunk: "Cyberpunk",
   horror: "Terror",
@@ -14,8 +12,11 @@ const themeLabels = {
 const configuredTheme = () => {
   try {
     const value = game.settings.get("lumenn-notify", "theme") ?? "system";
-    return value === "orv" || value === "manhwa-dark" ? "manhwa" : value;
+    return { orv: "system", manhwa: "system", "manhwa-dark": "system" }[value] ?? (themeLabels[value] ? value : "system");
   } catch { return "system"; }
+};
+const lightMode = () => {
+  try { return game.settings.get(NS, "lightMode") === true; } catch { return false; }
 };
 const settingValue = (key, fallback) => {
   try { return game.settings.get(NS, key) ?? fallback; } catch { return fallback; }
@@ -96,10 +97,12 @@ class LumennNotifyManager extends ApplicationV2 {
     this._lumennState = { selectedId: null, selectedGroupId: null, query: "", tab: "profiles", error: "", recipient: "all" };
     this._onThemeChange = () => this.render(true);
     Hooks.on("lumennNotifyThemeChanged", this._onThemeChange);
+    Hooks.on("lumennNotifyLightModeChanged", this._onThemeChange);
   }
 
   async close(options) {
     Hooks.off("lumennNotifyThemeChanged", this._onThemeChange);
+    Hooks.off("lumennNotifyLightModeChanged", this._onThemeChange);
     return super.close(options);
   }
 
@@ -149,7 +152,9 @@ class LumennNotifyManager extends ApplicationV2 {
   }
 
   #syncManagerTheme() {
-    if (this.element) this.element.dataset.lmManagerTheme = configuredTheme();
+    if (!this.element) return;
+    this.element.dataset.theme = configuredTheme();
+    this.element.dataset.light = lightMode() ? "true" : "false";
   }
 
   #draft() {
@@ -163,6 +168,7 @@ class LumennNotifyManager extends ApplicationV2 {
       ...p,
       name: value("name") || p.name,
       type: value("type") || p.type,
+      severity: undefined,
       theme: configuredTheme(),
       icon: value("icon") || p.icon,
       title: value("title") || p.title,
@@ -191,8 +197,9 @@ class LumennNotifyManager extends ApplicationV2 {
     if (!target) return;
     const p = this.#draft();
     this.#syncManagerTheme();
-    this.element.querySelector(".lm-manager")?.setAttribute("data-lm-manager-theme", p.theme);
-    target.dataset.lmTheme = p.theme;
+    this.element.querySelector(".lm-manager")?.setAttribute("data-theme", p.theme);
+    target.dataset.theme = p.theme;
+    target.dataset.light = lightMode() ? "true" : "false";
     target.innerHTML = this.api.renderMessage({ ...p, builtin: false });
   }
 
@@ -244,7 +251,7 @@ class LumennNotifyManager extends ApplicationV2 {
     const userSel = recipients.includes(this.state.recipient ?? "all") ? (this.state.recipient ?? "all") : "all";
 
     return `
-    <div class="lm-manager" data-lm-manager-theme="${esc(configuredTheme())}">
+    <div class="lm-manager" data-theme="${esc(configuredTheme())}">
       <div class="lm-sidebar">
         <div class="lm-sidebar-heading"><span>Perfis da campanha</span><b>${profiles.length}</b></div>
         <div class="lm-search-wrap">
@@ -314,7 +321,7 @@ class LumennNotifyManager extends ApplicationV2 {
           </div>
           <div class="lm-preview">
             <div class="lm-preview-label">Prévia real</div>
-            <div class="lm-preview-box" data-el="preview" data-lm-theme="${esc(configuredTheme())}">${this.api.renderMessage({ ...s, theme: configuredTheme(), builtin: false })}</div>
+            <div class="lm-preview-box" data-el="preview" data-theme="${esc(configuredTheme())}" data-light="${lightMode() ? "true" : "false"}">${this.api.renderMessage({ ...s, theme: configuredTheme(), builtin: false })}</div>
           </div>
         </div>
       </div>
@@ -348,7 +355,7 @@ class LumennNotifyManager extends ApplicationV2 {
       .join("");
     const g = selectedGroup ?? {};
     return `
-    <div class="lm-manager" data-lm-manager-theme="${esc(configuredTheme())}">
+    <div class="lm-manager" data-theme="${esc(configuredTheme())}">
       <div class="lm-sidebar">
         <div class="lm-search-wrap">
           <i class="fa-solid fa-magnifying-glass"></i>

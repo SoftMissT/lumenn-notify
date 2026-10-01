@@ -1,6 +1,6 @@
 {
   "name": "lumenn-notify",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
   "description": "Mensagens narrativas, perfis e canais para Foundry VTT.",
@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "check": "node --check scripts/lumenn-notify.js && node --check scripts/lumenn-notify-manager.js && node --check macros/sls-open-manager.js",
-    "test": "node tests/static-check.mjs && node tests/runtime-harness.mjs",
+    "test": "node tests/static-check.mjs && node tests/contrast-check.mjs && node tests/runtime-harness.mjs",
     "package": "node scripts-dev/package-zip.mjs",
     "release": "npm run check && npm run test && npm run package"
   }
