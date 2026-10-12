@@ -1,73 +1,61 @@
 # Lumenn Notify
 
-![Foundry VTT](https://img.shields.io/badge/Foundry_VTT-14-blueviolet)
-![Foundry VTT](https://img.shields.io/badge/Foundry_VTT-13.350-blueviolet)
-![Version](https://img.shields.io/github/v/release/SoftMissT/lumenn-notify?label=release)
-![License](https://img.shields.io/github/license/SoftMissT/lumenn-notify)
-![GitHub last commit](https://img.shields.io/github/last-commit/SoftMissT/lumenn-notify)
-![Downloads](https://img.shields.io/github/downloads/SoftMissT/lumenn-notify/total)
+Mensagens narrativas para Foundry VTT 14: o GM escolhe um perfil, define quem recebe e envia a mesma mensagem para o overlay e o chat.
 
-> Mensagens narrativas, perfis e canais para **Foundry VTT v14+**.
+![Foundry VTT 14](https://img.shields.io/badge/Foundry_VTT-14-243b53)
+![Versão](https://img.shields.io/github/v/release/SoftMissT/lumenn-notify?label=vers%C3%A3o)
+![Licença](https://img.shields.io/github/license/SoftMissT/lumenn-notify)
 
-O GM cria, edita e envia cartões de Sistema, quests, perigos e mensagens de
-Constelação para todos, para um jogador ou para grupos salvos. O mundo escolhe
-uma identidade visual global em Game Settings e a mesma marcação é usada no
-gerenciador, preview, chat e overlay.
+## O que o módulo resolve
 
-## Recursos
+- Perfis para sistema, missão, alerta, perigo, habilidade, evolução e constelação.
+- Presets nativos protegidos: duplique um preset para criar sua versão.
+- Destinatários: todos, GM, jogador específico ou grupo salvo.
+- Envio em overlay, chat ou nos dois canais.
+- Quatro temas globais: `system`, `fantasy`, `cyberpunk` e `horror`.
+- Importação e exportação de perfis em JSON.
+- Compatibilidade com `window.SLS.send(...)` e `window.SLS.abrir()`.
 
-- **Gerenciador de perfis** (ApplicationV2): criar, duplicar, renomear, salvar,
-  excluir, importar e exportar perfis.
-- **Presets nativos protegidos**: `system`, `quest`, `alert`, `danger`, `skill`,
-  `levelup`, `constellation` somente leitura; duplique para editar.
-- **Destinatários**: todos, só GM, um jogador ou um grupo salvo.
-- **Temas**: `system`, `fantasy`, `cyberpunk` e `horror`, configurados em **Configurações de Jogo → Lumenn Notify**.
-- **Configurações do GM**: duração, modo, som, modo leve e limite de até dez overlays simultâneos.
-- **Envio**: overlay + cartão no chat, com snapshot do perfil gravado na mensagem.
-- **Prévia confiável**: o botão **Usar** envia exatamente o rascunho mostrado na prévia, incluindo texto, stats e destinatário; o tema vem da configuração global.
-- **Compatibilidade**: `window.SLS.send(...)` e `window.SLS.abrir()` continuam
-  funcionando.
+O tema é escolhido em **Configurações de jogo → Lumenn Notify**. Mensagens já enviadas guardam o tema usado no momento do envio.
 
 ## Instalação
 
-URL do manifesto (a partir da release):
+No Foundry, instale pelo manifesto:
 
-```
+```text
 https://github.com/SoftMissT/lumenn-notify/releases/latest/download/module.json
 ```
 
-### Manual
+Ou baixe o ZIP da [última release](https://github.com/SoftMissT/lumenn-notify/releases) e extraia em `Data/modules/lumenn-notify/`. Depois, ative o módulo em **Configurações → Gerenciar módulos**.
 
-1. Baixe o `module.zip` da [última release](https://github.com/SoftMissT/lumenn-notify/releases).
-2. Extraia em `Data/modules/lumenn-notify/`.
-3. Ative em **Configurações → Gerenciar Módulos**.
+## Primeiro uso
 
-## Uso
+1. Entre no mundo como GM e ative o módulo.
+2. Abra o gerenciador pela macro `sls-open-manager` ou pelo console:
 
-1. Ative o módulo em **Configurações → Gerenciar Módulos**.
-2. Abra o console (somente GM):
-   - Macro `sls-open-manager`, ou
-   - `game.lumennNotify.openManager()` no console.
-3. Escolha um perfil, ajuste texto/destinatário, confira a prévia e clique
-   em **Enviar agora**.
+   ```js
+   game.lumennNotify.openManager();
+   ```
 
-As opções globais ficam em **Configurações de Jogo → Lumenn Notify**. Depois de
-alterar o tema, a janela do gerenciador e os cartões usam a nova identidade sem
-recarregar; as demais opções definem os defaults para perfis novos.
+3. Escolha um perfil ou clique em **Novo**.
+4. Edite a mensagem, o destino e o modo de exibição.
+5. Confira a prévia e clique em **Usar**.
 
-### API
+Presets nativos não podem ser sobrescritos. Use **Duplicar para editar** quando quiser alterar um deles.
+
+## API
 
 ```js
-game.lumennNotify.openManager(); // abre o gerenciador (GM)
+game.lumennNotify.openManager();
 game.lumennNotify.send({ profile: "quest", destination: "all" });
-game.lumennNotify.getProfiles(); // nativos + campanha
-game.lumennNotify.saveProfile(profile); // custom (GM)
-game.lumennNotify.deleteProfile(id); // custom (GM)
+game.lumennNotify.getProfiles();
+game.lumennNotify.saveProfile(profile);
+game.lumennNotify.deleteProfile(id);
 game.lumennNotify.getGroups();
 game.lumennNotify.saveGroups(groups);
 ```
 
-### Compatibilidade legada
+### API legada
 
 ```js
 window.SLS.abrir();
@@ -77,42 +65,36 @@ window.SLS.send("perigo", "Presença hostil detectada.");
 
 ## Temas
 
-| Tema      | Direção |
-| :-------- | :------ |
-| `system`    | Janela de sistema azul-marinho, aço e azul neon |
-| `fantasy`   | Manuscrito de pergaminho, mapa a tinta e selo de cera |
-| `cyberpunk` | HUD OLED angular, amarelo ácido, ciano e hazard stripe |
-| `horror`    | Interface analógica de sobrevivência, carvão, osso e musgo |
+| Tema | Uso |
+| --- | --- |
+| `system` | Interface de sistema, aço e azul |
+| `fantasy` | Pergaminho, tinta e selo |
+| `cyberpunk` | HUD angular e amarelo de alerta |
+| `horror` | Sobrevivência analógica, carvão e musgo |
 
-O tema ativo é uma configuração do mundo. Mensagens novas usam o tema atual;
-mensagens já enviadas preservam o tema salvo no snapshot, mesmo depois de uma
-troca de configuração. Valores legados `manhwa`, `orv` e `manhwa-dark` migram
-para `system` sem criar um quinto tema.
+Valores antigos (`manhwa`, `orv` e `manhwa-dark`) migram para `system`.
 
 ## Desenvolvimento
 
 ```powershell
-node tests/static-check.mjs    # valida manifesto, escopo de tokens, temas e API
-node tests/contrast-check.mjs  # contraste AA no pior caso de fundo claro
-node tests/runtime-harness.mjs # boot simulado (settings, hooks, chat, overlay)
+npm test                 # checks estáticos, contraste e harness de runtime
+npm run check            # sintaxe JavaScript
+npm run package          # gera o ZIP de distribuição
+npm run release          # gate completo + ZIP
 ```
 
-Gate final: teste manual no Foundry v14 com GM + jogador (CT-001..CT-020).
+O gate local não substitui o teste manual no Foundry 14 com GM e jogador. O roteiro de aceitação é CT-001..CT-020.
 
 ## Estrutura
 
+```text
+scripts/lumenn-notify.js          dados, presets, envio, render e hooks
+scripts/lumenn-notify-manager.js  gerenciador ApplicationV2
+styles/lumenn-notify.css          layout e tokens compartilhados
+styles/themes/*.css                temas visuais
+macros/sls-open-manager.js         atalho de abertura
+tests/                             checks estáticos e harness
 ```
-scripts/lumenn-notify.js          dados, presets, migração, envio, render, hook
-scripts/lumenn-notify-manager.js  gerenciador (ApplicationV2)
-styles/lumenn-notify.css          estrutura e variáveis
-styles/themes/{system,fantasy,cyberpunk,horror}.css
-macros/sls-open-manager.js        wrapper de abertura
-tests/                            checks estáticos + harness
-```
-
-## Changelog
-
-Ver [CHANGELOG.md](CHANGELOG.md).
 
 ## Licença
 

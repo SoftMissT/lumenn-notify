@@ -131,6 +131,19 @@ else bad("hook renderChatMessageHTML registrado", "ausente");
 if (!coreCss.includes(":has(.ln-message)")) ok("CSS do ChatLog não usa :has");
 else bad("CSS do ChatLog não usa :has", "seletor estrutural frágil");
 
+console.log("\n[cartão compacto]");
+const tier = coreCss.slice(coreCss.indexOf("@container (max-width: 520px)"));
+const tierBlock = tier.slice(0, tier.indexOf("\n}") + 1);
+if (tierBlock.includes("animation: none") && tierBlock.includes("grid-template-columns") && tierBlock.includes("min-height: 0"))
+  ok("tier 520px: sem animação por cartão, topo em grid e sem vazio estrutural");
+else bad("tier 520px", "faltou animation/backdrop, grid do topo ou min-height zerado");
+if (coreCss.includes("container-type: inline-size") && coreCss.includes("@container (max-width: 340px)"))
+  ok("cartão responde à própria largura (520px e 340px)");
+else bad("cartão responde à própria largura", "container queries ausentes");
+if (coreCss.includes(".chat-message.lumenn-chat-message .ln-message"))
+  ok("ChatLog limita a largura do cartão");
+else bad("ChatLog limita a largura do cartão", "sem teto de largura no log");
+
 if (failed) {
   console.error(`\nFAIL · ${failed} check(s) falharam`);
   process.exit(1);

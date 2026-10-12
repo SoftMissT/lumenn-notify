@@ -10,6 +10,9 @@
   width: 100%;
   max-width: 680px;
   margin: 0 auto;
+  /* O cartão consulta a própria largura: coluna de chat e prévia ficam densas,
+     overlay (780px) mantém o cartão de cinema. Ver bloco compacto abaixo. */
+  container-type: inline-size;
   font-family: var(--lm-font-ui, sans-serif);
 }
 .ln-message .ln-frame {
@@ -164,6 +167,140 @@
 .ln-message .ln-frame > .ln-panel {
   border-radius: 2px;
   overflow: hidden;
+}
+
+/* ---------- Cartão compacto (ChatLog e prévia do gerenciador) ----------
+   Medido: em 380px o cartão de cinema ocupava 213–285px por mensagem, com o
+   título quebrando em 2–3 linhas e 235px de vazio estrutural nos presets
+   quest/levelup. Aqui ele vira entrada de log: uma linha de topo, corpo denso,
+   sem moldura decorativa competindo com o texto.
+   Sem `animation`, `filter` e `backdrop-filter` por cartão: no log há dezenas
+   deles e cada quadro animado é repintura. O overlay conserva os três. */
+@container (max-width: 520px) {
+  .ln-message .ln-frame {
+    /* A tag e o cabeçalho dividem a primeira linha (a tag é irmã do header no
+       DOM, não filha); corpo, origem, stats e rodapé ocupam a largura inteira. */
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    column-gap: 8px;
+    padding: 12px 14px 16px;
+    animation: none;
+    filter: none;
+  }
+  /* O `backdrop-filter` do tema (system) precisa de seletor mais específico que
+     `[data-theme="<tema>"] .ln-frame`, que carrega depois deste arquivo. */
+  .ln-message[data-theme] .ln-frame {
+    backdrop-filter: none;
+  }
+  /* Decoração de tema é fundo, não tinta sobre o texto: a faixa do cyberpunk e
+     a vignette do horror comiam o rodapé no cartão curto. */
+  .ln-message .ln-frame > * {
+    position: relative;
+    z-index: 1;
+  }
+  /* O tema fantasy tem fita costurada à esquerda (8–21px): o texto não pisa nela. */
+  .ln-message[data-theme="fantasy"] .ln-frame {
+    padding-left: 26px;
+  }
+  .ln-message header {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    gap: 7px;
+    padding: 0 0 8px;
+  }
+  .ln-message header i,
+  .ln-message[data-lm-type="quest"] header i,
+  .ln-message[data-lm-type="levelup"] header i {
+    font-size: 13px;
+  }
+  .ln-message[data-theme] header::before {
+    font-size: 12px;
+  }
+  .ln-message header h2 {
+    /* Sem `min-width: 0` o título estoura a coluna e passa por baixo da tag. */
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: 15px;
+    letter-spacing: 0.07em;
+  }
+  .ln-message .ln-tag {
+    position: relative;
+    /* O core posiciona a tag de forma absoluta (top/right); relativa, esses
+       valores viram deslocamento e tiram o chip do lugar. */
+    inset: auto;
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: 2px;
+    padding: 2px 6px;
+    font-size: 8.5px;
+    letter-spacing: 0.14em;
+  }
+  .ln-message .ln-origin,
+  .ln-message p,
+  .ln-message .ln-stats,
+  .ln-message footer {
+    grid-column: 1 / -1;
+  }
+  .ln-message .ln-origin {
+    padding-top: 7px;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
+  .ln-message p {
+    margin-top: 9px;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .ln-message .ln-stats {
+    gap: 4px;
+    margin-top: 10px;
+  }
+  .ln-message .ln-stat {
+    padding: 5px 9px;
+  }
+  .ln-message .ln-stat span {
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+  }
+  .ln-message .ln-stat b {
+    font-size: 12px;
+  }
+  .ln-message footer {
+    margin-top: 10px;
+    font-size: 8.5px;
+    letter-spacing: 0.16em;
+  }
+  .ln-message[data-lm-type="quest"] .ln-frame,
+  .ln-message[data-lm-type="levelup"] .ln-frame {
+    min-height: 0;
+  }
+  .ln-message[data-lm-type="quest"] header,
+  .ln-message[data-lm-type="levelup"] header {
+    justify-content: flex-start;
+    text-align: left;
+  }
+}
+
+/* ---------- Cartão compacto estreito (barra lateral padrão do Foundry) ----------
+   Com ~300px úteis não cabe tag e título na mesma linha: a tag vai para uma
+   linha própria à direita e o título fica com a largura inteira. Medido: o
+   título de três palavras caía para 3 linhas dividindo a linha com a tag, e
+   volta a 1 linha aqui. */
+@container (max-width: 340px) {
+  .ln-message .ln-frame {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ln-message .ln-tag {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+  }
+  .ln-message header {
+    grid-column: 1;
+    grid-row: 2;
+  }
 }
 
 /* Overlay fixo (modo overlay) */
@@ -759,16 +896,8 @@
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.05), 0 12px 30px rgba(0, 0, 0, 0.18);
 }
 .lumenn-notify-manager .lm-preview-box > .ln-message {
-  max-width: none;
-}
-.lumenn-notify-manager .lm-preview-box .ln-frame {
-  padding: 22px 18px 16px;
-}
-.lumenn-notify-manager .lm-preview-box .ln-message p {
-  font-size: 14px;
-}
-.lumenn-notify-manager .lm-preview-box .ln-message header h2 {
-  font-size: 16px;
+  /* A prévia mostra o que o jogador vê no chat, não o cartão de overlay. */
+  max-width: 512px;
 }
 
 .lumenn-notify-manager .lm-preview {
@@ -889,6 +1018,12 @@
   border: 0;
   box-shadow: none;
   padding: 0;
+}
+/* Teto de largura: o log é coluna de leitura, não palco — assim o layout
+   compacto vale mesmo com a barra lateral arrastada para largo. */
+.chat-message.lumenn-chat-message .ln-message {
+  max-width: 512px;
+  margin: 0;
 }
 .chat-message.lumenn-chat-message .message-header {
   display: none;

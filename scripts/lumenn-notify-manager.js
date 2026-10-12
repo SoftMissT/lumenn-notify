@@ -268,11 +268,11 @@ class LumennNotifyManager extends ApplicationV2 {
       <div class="lm-main">
         <div class="lm-command-header">
           <div>
-            <span class="lm-kicker">LUMENN NOTIFY // GM</span>
+            <span class="lm-kicker">Área do GM</span>
             <h1>Lumenn Notify</h1>
-            <span class="lm-profile-context">Perfil ativo: ${esc(s.name ?? "Nenhum perfil")} · Tema global: ${esc(themeLabels[configuredTheme()])}</span>
+            <span class="lm-profile-context">Perfil: ${esc(s.name ?? "Nenhum perfil")} · Tema: ${esc(themeLabels[configuredTheme()])}</span>
           </div>
-          <span class="lm-online"><i class="fa-solid fa-circle"></i> canal seguro</span>
+          <span class="lm-online"><i class="fa-solid fa-circle"></i> pronto para enviar</span>
         </div>
         <div class="lm-toolbar">
           <button type="button" data-action="newProfile"><i class="fa-solid fa-plus"></i> Novo</button>
@@ -322,7 +322,7 @@ class LumennNotifyManager extends ApplicationV2 {
             ${this.state.error ? `<div class="lm-error">${esc(this.state.error)}</div>` : ""}
           </div>
           <div class="lm-preview">
-            <div class="lm-preview-label">Prévia real</div>
+            <div class="lm-preview-label">Prévia</div>
             <div class="lm-preview-box" data-el="preview" data-theme="${esc(configuredTheme())}" data-light="${lightMode() ? "true" : "false"}">${this.api.renderMessage({ ...s, theme: configuredTheme(), builtin: false })}</div>
           </div>
         </div>
@@ -372,7 +372,7 @@ class LumennNotifyManager extends ApplicationV2 {
       <div class="lm-main">
         <div class="lm-command-header">
           <div>
-            <span class="lm-kicker">LUMENN NOTIFY // DESTINATÁRIOS</span>
+            <span class="lm-kicker">Destinatários</span>
             <h1>Grupos de jogadores</h1>
             <span class="lm-profile-context">Envie mensagens para uma seleção salva de usuários.</span>
           </div>

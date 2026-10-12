@@ -5,6 +5,29 @@ Todas as mudanças relevantes do módulo **Lumenn Notify** são registradas aqui
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o versionamento é [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.3.3] - 2026-10-12
+
+- O cartão no ChatLog vira entrada de log: título em uma linha, corpo denso e
+  nenhuma moldura competindo com o texto. Medido no Chromium sobre o HTML real
+  de `renderMessage()`, numa coluna de 380px cada mensagem caiu de 213–285px
+  para 122–166px de altura.
+- O cartão passa a responder à largura do próprio contêiner, em dois degraus
+  (520px e 340px): na barra lateral padrão do Foundry a tabuleta ganha linha
+  própria e o título recebe a largura inteira; a prévia do gerenciador mostra o
+  mesmo formato do chat; o overlay mantém o cartão grande.
+- Dentro do log o cartão não anima mais e perde `filter` e `backdrop-filter`:
+  com dezenas de mensagens, cada quadro animado era repintura. O overlay
+  conserva os três.
+- A tabuleta sai do canto superior — onde passava por baixo do título quando ele
+  quebrava — para a linha do título.
+- Decoração de tema vira fundo: a faixa listrada do cyberpunk não corta mais o
+  rodapé e a vignette do horror não escurece o texto no cartão curto; a fita
+  costurada do fantasy não é mais pisada pelo texto.
+- `assets/manager-bg-16x9.png` (2.163.122 bytes, sem nenhuma referência no
+  código, nos estilos ou no manifesto) vira `manager-bg-16x9.webp`
+  (179.344 bytes) — 91,7% menores, mesma arte e mesmas dimensões (1672×941).
+  É o que fazia o pacote pesar 2,18 MB.
+
 ## [0.3.2] - 2026-10-01
 
 - Reforça a identidade visual dos quatro temas no gerenciador e nos cartões,

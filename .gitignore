@@ -18,6 +18,8 @@ AGENTS.md
 Thumbs.db
 
 # Planejamento interno
-/SDD/*
+/SDD
 /.gitnexus
 /legacy
+CLAUDE.md
+/artifacts
